@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Meu Perfil{% endblock %}
+{% block content %}
+<div class="px-4 py-12">
+  <div class="max-w-4xl mx-auto">
+
+    <!-- Boas-vindas -->
+    <div class="mb-10 animate-fade-in">
+      <h1 class="font-cinzel font-bold text-3xl text-white mb-1">
+        Olá, {{ usuario.nome.split()[0] }} 👋
+      </h1>
+      <p class="text-white/50">Seu painel de autoconhecimento comportamental</p>
+    </div>
+
+    <!-- Perfil card -->
+    {% set p = dados.primario_data %}
+    {% set s = dados.secundario_data %}
+    <div class="glass rounded-2xl p-6 mb-6 border border-mystic-500/20 animate-slide-up">
+      <div class="flex flex-col sm:flex-row items-start gap-5">
+        <div class="text-6xl">{{ p.emoji }}</div>
+        <div class="flex-1">
+          <div class="flex items-center gap-3 flex-wrap mb-1">
+            <h2 class="font-cinzel font-bold text-3xl text-white">{{ p.nome }}</h2>
+            {% if usuario.is_premium %}
+            <span class="text-xs bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-1 rounded-full">✨ Premium</span>
+            {% endif %}
+          </div>
+          <p class="text-mystic-400 mb-1">{{ p.subtitulo }}</p>
+          <p class="text-white/50 text-sm">Influência secundária: <strong class="text-white/70">{{ s.emoji }} {{ s.nome }}</strong></p>
+          <div class="flex flex-wrap gap-2 mt-3">
+            {% for t in p.tracos %}
+            <span class="text-xs bg-mystic-500/20 text-mystic-300 border border-mystic-500/30 px-3 py-1 rounded-full">{{ t }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        <a href="/resultado" class="flex-shrink-0 glass text-white/70 hover:text-white text-sm px-4 py-2 rounded-xl transition-all hover:bg-white/10">
+          Ver análise completa →
+        </a>
+      </div>
+    </div>
+
+    <!-- Quick stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      {% for item in [
+        (p.emoji, "Arquétipo Primário", p.nome, ""),
+        (s.emoji, "Influência Secundária", s.nome, ""),
+        ("📊", "Identificação", dados.percentuais[dados.primario]|string + "%", ""),
+      ] %}
+      <div class="glass rounded-xl p-5 text-center">
+        <div class="text-3xl mb-2">{{ item[0] }}</div>
+        <div class="text-white/40 text-xs uppercase tracking-wider mb-1">{{ item[1] }}</div>
+        <div class="font-cinzel font-semibold text-white">{{ item[2] }}</div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Ações rápidas -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+      <a href="/resultado" class="glass rounded-xl p-5 hover:bg-white/5 transition-all group">
+        <div class="flex items-center gap-4">
+          <div class="text-3xl">🎯</div>
+          <div>
+            <div class="font-semibold text-white group-hover:text-mystic-300 transition-colors">Análise Completa</div>
+            <div class="text-white/50 text-sm">Pontos fortes, atenção, carreira e relações</div>
+          </div>
+          <span class="ml-auto text-white/30 group-hover:text-white/60 transition-colors">→</span>
+        </div>
+      </a>
+
+      {% if usuario.is_premium %}
+      <a href="/chat" class="glass rounded-xl p-5 hover:bg-white/5 transition-all group border border-amber-500/20">
+        <div class="flex items-center gap-4">
+          <div class="text-3xl">💬</div>
+          <div>
+            <div class="font-semibold text-white group-hover:text-amber-300 transition-colors">Chat com IA</div>
+            <div class="text-white/50 text-sm">Orientações personalizadas em tempo real</div>
+          </div>
+          <span class="ml-auto text-white/30 group-hover:text-amber-400 transition-colors">→</span>
+        </div>
+      </a>
+      {% else %}
+      <a href="/assinar" class="bg-gradient-to-br from-mystic-800/30 to-mystic-950/50 border border-mystic-500/30 rounded-xl p-5 hover:border-mystic-400/50 transition-all group">
+        <div class="flex items-center gap-4">
+          <div class="text-3xl">✨</div>
+          <div>
+            <div class="font-semibold text-white group-hover:text-mystic-300 transition-colors">Upgrade Premium</div>
+            <div class="text-white/50 text-sm">Chat com IA + orientações aprofundadas</div>
+          </div>
+          <span class="ml-auto text-amber-400 text-xs font-bold">R$29,90</span>
+        </div>
+      </a>
+      {% endif %}
+    </div>
+
+    <!-- Insight do dia -->
+    <div class="glass rounded-2xl p-6 mb-6">
+      <h3 class="font-cinzel font-semibold text-white mb-3 flex items-center gap-2">
+        <span>💡</span> Padrão de Tomada de Decisão
+      </h3>
+      <p class="text-white/60 text-sm leading-relaxed">{{ p.tomada_decisao }}</p>
+    </div>
+
+    <!-- Carreira -->
+    <div class="glass rounded-2xl p-6">
+      <h3 class="font-cinzel font-semibold text-white mb-3 flex items-center gap-2">
+        <span>💼</span> Tendências Profissionais
+      </h3>
+      <p class="text-white/60 text-sm leading-relaxed">{{ p.carreira }}</p>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

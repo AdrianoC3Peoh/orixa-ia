@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Cadastro{% endblock %}
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-4 py-16">
+  <div class="w-full max-w-md animate-slide-up">
+    <div class="text-center mb-8">
+      <div class="text-5xl mb-4">🌟</div>
+      <h1 class="font-cinzel font-bold text-3xl text-white mb-2">Criar Conta</h1>
+      <p class="text-white/50">Inicie sua jornada de autoconhecimento</p>
+    </div>
+    <div class="glass rounded-2xl p-8">
+      <div id="erro" class="hidden mb-4 bg-red-500/20 border border-red-500/30 text-red-300 text-sm px-4 py-3 rounded-xl"></div>
+      <form id="formCadastro" class="space-y-5">
+        <div>
+          <label class="block text-white/70 text-sm font-medium mb-2">Nome completo</label>
+          <input id="nome" type="text" required placeholder="Seu nome"
+            class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-mystic-500 transition-colors" />
+        </div>
+        <div>
+          <label class="block text-white/70 text-sm font-medium mb-2">E-mail</label>
+          <input id="email" type="email" required placeholder="seu@email.com"
+            class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-mystic-500 transition-colors" />
+        </div>
+        <div>
+          <label class="block text-white/70 text-sm font-medium mb-2">Senha</label>
+          <input id="senha" type="password" required placeholder="Mínimo 6 caracteres"
+            class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-mystic-500 transition-colors" />
+        </div>
+        <div>
+          <label class="block text-white/70 text-sm font-medium mb-2">Código de Convite</label>
+          <input id="codigo_convite" type="text" required placeholder="Digite o código recebido"
+            class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-mystic-500 transition-colors uppercase tracking-widest" />
+          <p class="text-white/30 text-xs mt-1">Solicite o código ao administrador do app</p>
+        </div>
+        <button type="submit" id="btnSubmit"
+          class="btn-primary w-full text-white py-3 rounded-xl font-semibold text-base mt-2 flex items-center justify-center gap-2">
+          <span id="btnText">Criar Conta Grátis</span>
+          <span id="btnLoader" class="hidden w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+        </button>
+      </form>
+      <p class="text-center text-white/40 text-sm mt-6">
+        Já tem conta? <a href="/login" class="text-mystic-400 hover:text-mystic-300 transition-colors">Entrar</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+document.getElementById('formCadastro').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('btnSubmit');
+  const loader = document.getElementById('btnLoader');
+  const text = document.getElementById('btnText');
+  const erro = document.getElementById('erro');
+  erro.classList.add('hidden');
+  btn.disabled = true; loader.classList.remove('hidden'); text.textContent = 'Criando conta...';
+  try {
+    const data = await apiFetch('/api/auth/cadastro', {
+      method: 'POST',
+      body: JSON.stringify({
+        nome: document.getElementById('nome').value,
+        email: document.getElementById('email').value,
+        senha: document.getElementById('senha').value,
+        codigo_convite: document.getElementById('codigo_convite').value,
+      })
+    });
+    salvarToken(data.token);
+    window.location.href = '/onboarding';
+  } catch(err) {
+    showError(erro, err.message);
+    btn.disabled = false; loader.classList.add('hidden'); text.textContent = 'Criar Conta Grátis';
+  }
+});
+</script>
+{% endblock %}

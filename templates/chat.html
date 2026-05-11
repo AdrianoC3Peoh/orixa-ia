@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+{% block title %}Chat — {{ dados.primario_data.nome }}{% endblock %}
+{% block content %}
+<div class="flex flex-col h-[calc(100vh-4rem)]">
+
+  <!-- Chat header -->
+  <div class="glass-dark border-b border-white/10 px-4 py-3 flex items-center gap-4 flex-shrink-0">
+    <div class="text-3xl">{{ dados.primario_data.emoji }}</div>
+    <div>
+      <div class="font-cinzel font-semibold text-white text-sm">{{ dados.primario_data.nome }} IA</div>
+      <div class="text-white/40 text-xs">Orientação baseada no seu arquétipo · Plano Premium</div>
+    </div>
+    <div class="ml-auto flex items-center gap-2">
+      <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+      <span class="text-green-400 text-xs">Online</span>
+    </div>
+  </div>
+
+  <!-- Messages area -->
+  <div id="mensagens" class="flex-1 overflow-y-auto px-4 py-6 space-y-4">
+
+    <!-- Mensagem de boas-vindas -->
+    <div class="flex gap-3 animate-fade-in">
+      <div class="w-9 h-9 rounded-full glass flex items-center justify-center flex-shrink-0 text-lg">
+        {{ dados.primario_data.emoji }}
+      </div>
+      <div class="max-w-xl">
+        <div class="glass rounded-2xl rounded-tl-sm px-4 py-3">
+          <p class="text-white/80 text-sm leading-relaxed">
+            Olá, <strong class="text-white">{{ usuario.nome }}</strong>! 👋<br><br>
+            Seu diagnóstico indica o arquétipo <strong class="text-mystic-300">{{ dados.primario_data.nome }}</strong>
+            com influência de <strong class="text-mystic-400">{{ dados.secundario_data.nome }}</strong>.<br><br>
+            Posso te ajudar com orientações sobre <strong>tomada de decisão</strong>, <strong>relacionamentos</strong>,
+            <strong>carreira</strong> e <strong>comportamento</strong> — tudo calibrado no seu perfil.
+            Sobre o que você quer conversar?
+          </p>
+        </div>
+        <div class="text-white/30 text-xs mt-1 ml-1">Orixá IA</div>
+      </div>
+    </div>
+
+    <!-- Histórico -->
+    {% for msg in historico %}
+    <div class="flex gap-3 animate-fade-in {% if msg.role == 'user' %}flex-row-reverse{% endif %}">
+      {% if msg.role == 'assistant' %}
+      <div class="w-9 h-9 rounded-full glass flex items-center justify-center flex-shrink-0 text-lg">
+        {{ dados.primario_data.emoji }}
+      </div>
+      {% else %}
+      <div class="w-9 h-9 rounded-full bg-mystic-600/50 flex items-center justify-center flex-shrink-0 text-sm font-bold text-white">
+        {{ usuario.nome[0].upper() }}
+      </div>
+      {% endif %}
+      <div class="max-w-xl">
+        <div class="{% if msg.role == 'user' %}bg-mystic-600/40 border border-mystic-500/30 rounded-2xl rounded-tr-sm{% else %}glass rounded-2xl rounded-tl-sm{% endif %} px-4 py-3">
+          <p class="text-white/80 text-sm leading-relaxed whitespace-pre-wrap">{{ msg.conteudo }}</p>
+        </div>
+        <div class="text-white/30 text-xs mt-1 {% if msg.role == 'user' %}text-right mr-1{% else %}ml-1{% endif %}">
+          {% if msg.role == 'user' %}Você{% else %}Orixá IA{% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+    <!-- Typing indicator (hidden) -->
+    <div id="typing" class="hidden flex gap-3 animate-fade-in">
+      <div class="w-9 h-9 rounded-full glass flex items-center justify-center flex-shrink-0 text-lg">
+        {{ dados.primario_data.emoji }}
+      </div>
+      <div class="glass rounded-2xl rounded-tl-sm px-4 py-3">
+        <div class="flex gap-1 items-center h-5">
+          <span class="w-2 h-2 bg-white/40 rounded-full animate-bounce" style="animation-delay:0s"></span>
+          <span class="w-2 h-2 bg-white/40 rounded-full animate-bounce" style="animation-delay:0.15s"></span>
+          <span class="w-2 h-2 bg-white/40 rounded-full animate-bounce" style="animation-delay:0.3s"></span>
+        </div>
+      </div>
+    </div>
+
+    <div id="anchor"></div>
+  </div>
+
+  <!-- Sugestões rápidas -->
+  <div id="sugestoes" class="px-4 py-2 flex gap-2 overflow-x-auto flex-shrink-0 {% if historico %}hidden{% endif %}">
+    {% for s in [
+      "Como eu tomo melhores decisões?",
+      "Qual meu maior ponto cego?",
+      "Como me comporto nos relacionamentos?",
+      "Quais carreiras combinam comigo?",
+      "Como lidar com conflitos?"
+    ] %}
+    <button onclick="usarSugestao(this)"
+      class="flex-shrink-0 glass text-white/60 hover:text-white text-xs px-3 py-2 rounded-full transition-all hover:bg-white/10 border border-white/10">
+      {{ s }}
+    </button>
+    {% endfor %}
+  </div>
+
+  <!-- Input area -->
+  <div class="glass-dark border-t border-white/10 px-4 py-3 flex-shrink-0">
+    <div class="flex gap-3 max-w-4xl mx-auto items-end">
+      <textarea id="inputMsg"
+        placeholder="Pergunte sobre decisões, relacionamentos, carreira..."
+        rows="1"
+        class="flex-1 bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-white placeholder-white/30 text-sm focus:outline-none focus:border-mystic-500 transition-colors resize-none leading-relaxed"
+        style="max-height:120px"
+        onkeydown="handleKey(event)"
+        oninput="autoResize(this)"></textarea>
+      <button id="btnEnviar" onclick="enviar()"
+        class="btn-primary text-white w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 disabled:opacity-30 transition-all">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+    <p class="text-center text-white/20 text-xs mt-2">Respostas baseadas em padrões estatísticos. Não substitui orientação profissional.</p>
+  </div>
+
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+function scrollBottom() {
+  document.getElementById('anchor').scrollIntoView({ behavior: 'smooth' });
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviar(); }
+}
+
+function usarSugestao(btn) {
+  document.getElementById('inputMsg').value = btn.textContent.trim();
+  document.getElementById('sugestoes').classList.add('hidden');
+  enviar();
+}
+
+function addMsg(role, texto) {
+  const container = document.getElementById('mensagens');
+  const anchor = document.getElementById('anchor');
+  const isUser = role === 'user';
+  const initial = '{{ usuario.nome[0].upper() }}';
+  const emoji = '{{ dados.primario_data.emoji }}';
+  const nome = '{{ usuario.nome }}';
+
+  const wrap = document.createElement('div');
+  wrap.className = `flex gap-3 animate-fade-in ${isUser ? 'flex-row-reverse' : ''}`;
+  wrap.innerHTML = `
+    <div class="w-9 h-9 rounded-full ${isUser ? 'bg-mystic-600/50' : 'glass'} flex items-center justify-center flex-shrink-0 text-${isUser ? 'sm font-bold text-white' : 'lg'}">
+      ${isUser ? initial : emoji}
+    </div>
+    <div class="max-w-xl">
+      <div class="${isUser ? 'bg-mystic-600/40 border border-mystic-500/30 rounded-2xl rounded-tr-sm' : 'glass rounded-2xl rounded-tl-sm'} px-4 py-3">
+        <p class="text-white/80 text-sm leading-relaxed whitespace-pre-wrap">${texto}</p>
+      </div>
+      <div class="text-white/30 text-xs mt-1 ${isUser ? 'text-right mr-1' : 'ml-1'}">${isUser ? 'Você' : 'Orixá IA'}</div>
+    </div>
+  `;
+  container.insertBefore(wrap, anchor);
+  scrollBottom();
+}
+
+async function enviar() {
+  const input = document.getElementById('inputMsg');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  document.getElementById('sugestoes').classList.add('hidden');
+  document.getElementById('btnEnviar').disabled = true;
+
+  addMsg('user', msg);
+
+  const typing = document.getElementById('typing');
+  typing.classList.remove('hidden');
+  scrollBottom();
+
+  try {
+    const data = await apiFetch('/api/chat', {
+      method: 'POST',
+      body: JSON.stringify({ mensagem: msg })
+    });
+    typing.classList.add('hidden');
+    addMsg('assistant', data.resposta);
+  } catch(err) {
+    typing.classList.add('hidden');
+    addMsg('assistant', `Desculpe, ocorreu um erro: ${err.message}`);
+  } finally {
+    document.getElementById('btnEnviar').disabled = false;
+    input.focus();
+  }
+}
+
+scrollBottom();
+document.getElementById('inputMsg').focus();
+</script>
+{% endblock %}

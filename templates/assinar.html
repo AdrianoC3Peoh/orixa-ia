@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Assinar Premium{% endblock %}
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-4 py-16">
+  <div class="w-full max-w-lg animate-slide-up">
+
+    <div class="text-center mb-8">
+      <div class="text-6xl mb-4 animate-float inline-block">⭐</div>
+      <h1 class="font-cinzel font-bold text-3xl text-white mb-2">Plano Premium</h1>
+      <p class="text-white/50">Desbloqueie o chat com IA calibrada no seu arquétipo</p>
+    </div>
+
+    <!-- Preço -->
+    <div class="glass rounded-2xl p-8 mb-6 border border-mystic-500/20 text-center">
+      <div class="text-5xl font-bold text-white mb-1">R$ 29<span class="text-3xl">,90</span></div>
+      <div class="text-white/40 text-sm mb-6">/mês · cancele quando quiser</div>
+      <ul class="space-y-3 text-left mb-8">
+        {% for item in [
+          ("✓", "green", "Chat ilimitado com IA do seu arquétipo"),
+          ("✓", "green", "Orientações de tomada de decisão personalizadas"),
+          ("✓", "green", "Análise comportamental em relacionamentos"),
+          ("✓", "green", "Orientações profissionais e de liderança"),
+          ("✓", "green", "Mapa comportamental detalhado"),
+          ("✓", "green", "Acesso a todos os recursos futuros"),
+        ] %}
+        <li class="flex items-center gap-3 text-sm text-white/70">
+          <span class="text-green-400 font-bold">{{ item[0] }}</span>
+          <span>{{ item[2] }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+
+      <!-- Demo notice -->
+      <div class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 mb-6">
+        <p class="text-amber-300 text-xs text-center">
+          🔒 <strong>Modo demonstração</strong> — Use o código <code class="bg-amber-500/20 px-1 rounded">DEMO2024</code> para ativar grátis
+        </p>
+      </div>
+
+      <div id="erro" class="hidden mb-4 bg-red-500/20 border border-red-500/30 text-red-300 text-sm px-4 py-3 rounded-xl"></div>
+      <div id="sucesso" class="hidden mb-4 bg-green-500/20 border border-green-500/30 text-green-300 text-sm px-4 py-3 rounded-xl"></div>
+
+      <div class="space-y-3">
+        <div>
+          <input id="codigoDesconto" type="text" placeholder="Código de desconto (opcional)"
+            class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 text-sm focus:outline-none focus:border-mystic-500 transition-colors" />
+        </div>
+        <button onclick="ativar()" id="btnAssinar"
+          class="btn-gold w-full text-white py-4 rounded-xl font-bold text-base flex items-center justify-center gap-2">
+          <span id="btnText">✨ Assinar Agora</span>
+          <span id="btnLoader" class="hidden w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+        </button>
+        <button onclick="ativarDemo()" class="w-full glass text-white/50 py-3 rounded-xl text-sm hover:bg-white/5 transition-all">
+          Ativar modo demo (gratuito)
+        </button>
+      </div>
+    </div>
+
+    <div class="text-center">
+      <a href="/resultado" class="text-white/30 hover:text-white/60 text-sm transition-colors">← Voltar ao resultado</a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function ativar(codigo) {
+  const btn = document.getElementById('btnAssinar');
+  const loader = document.getElementById('btnLoader');
+  const text = document.getElementById('btnText');
+  const erro = document.getElementById('erro');
+  const sucesso = document.getElementById('sucesso');
+  erro.classList.add('hidden');
+  sucesso.classList.add('hidden');
+
+  const codigoVal = codigo !== undefined ? codigo : document.getElementById('codigoDesconto').value.trim();
+
+  btn.disabled = true; loader.classList.remove('hidden'); text.textContent = 'Processando...';
+  try {
+    const data = await apiFetch('/api/premium/ativar', {
+      method: 'POST',
+      body: JSON.stringify({ codigo: codigoVal })
+    });
+    sucesso.textContent = data.mensagem || 'Premium ativado!';
+    sucesso.classList.remove('hidden');
+    setTimeout(() => window.location.href = data.redirect || '/chat', 1500);
+  } catch(err) {
+    showError(erro, err.message);
+    btn.disabled = false; loader.classList.add('hidden'); text.textContent = '✨ Assinar Agora';
+  }
+}
+
+function ativarDemo() { ativar('DEMO2024'); }
+</script>
+{% endblock %}

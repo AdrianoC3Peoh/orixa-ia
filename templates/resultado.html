@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block title %}Seu Arquétipo{% endblock %}
+{% block content %}
+<div class="px-4 py-12">
+  <div class="max-w-4xl mx-auto">
+
+    <!-- Header -->
+    <div class="text-center mb-10 animate-fade-in">
+      <div class="text-5xl mb-4">🎯</div>
+      <h1 class="font-cinzel font-bold text-4xl text-white mb-3">Seu Perfil Comportamental</h1>
+      <p class="text-white/50">Baseado em análise estatística de {{ perguntas|length if perguntas else 25 }} respostas comportamentais</p>
+    </div>
+
+    {% set p = dados.primario_data %}
+    {% set s = dados.secundario_data %}
+
+    <!-- Arquétipo Primário -->
+    <div class="glass rounded-2xl p-8 mb-6 animate-slide-up border border-mystic-500/20">
+      <div class="flex flex-col md:flex-row items-start gap-6">
+        <div class="flex-shrink-0 text-center">
+          <div class="text-7xl mb-2">{{ p.emoji }}</div>
+          <div class="text-xs text-mystic-400 font-medium uppercase tracking-wider">Primário</div>
+        </div>
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-2 flex-wrap">
+            <h2 class="font-cinzel font-bold text-4xl text-white">{{ p.nome }}</h2>
+            <span class="text-sm text-white/50 font-normal">{{ dados.percentuais[dados.primario] }}% de identificação</span>
+          </div>
+          <p class="text-mystic-300 font-medium mb-4">{{ p.subtitulo }}</p>
+          <p class="text-white/70 leading-relaxed">{{ p.descricao }}</p>
+          <!-- Traits -->
+          <div class="flex flex-wrap gap-2 mt-4">
+            {% for t in p.tracos %}
+            <span class="text-xs bg-mystic-500/20 text-mystic-300 border border-mystic-500/30 px-3 py-1 rounded-full">{{ t }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arquétipo Secundário -->
+    <div class="glass rounded-2xl p-6 mb-8 animate-slide-up opacity-90">
+      <div class="flex items-start gap-4">
+        <div class="text-4xl flex-shrink-0">{{ s.emoji }}</div>
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-1 flex-wrap">
+            <h3 class="font-cinzel font-semibold text-2xl text-white">{{ s.nome }}</h3>
+            <span class="text-xs text-white/40 bg-white/5 px-2 py-0.5 rounded-full">Influência Secundária</span>
+            <span class="text-sm text-white/50">{{ dados.percentuais[dados.secundario] }}%</span>
+          </div>
+          <p class="text-white/60 font-medium text-sm mb-2">{{ s.subtitulo }}</p>
+          <p class="text-white/50 text-sm leading-relaxed">{{ s.descricao_curta }}</p>
+          <div class="flex flex-wrap gap-2 mt-3">
+            {% for t in s.tracos %}
+            <span class="text-xs bg-white/5 text-white/50 border border-white/10 px-3 py-1 rounded-full">{{ t }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Análise detalhada (2 colunas) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <!-- Pontos fortes -->
+      <div class="glass rounded-2xl p-6">
+        <h3 class="font-cinzel font-semibold text-white text-lg mb-4 flex items-center gap-2">
+          <span>💪</span> Pontos Fortes
+        </h3>
+        <ul class="space-y-2">
+          {% for item in p.pontos_fortes %}
+          <li class="flex items-start gap-3 text-sm text-white/70">
+            <span class="text-green-400 mt-0.5 flex-shrink-0">✓</span>
+            <span>{{ item }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <!-- Pontos de atenção -->
+      <div class="glass rounded-2xl p-6">
+        <h3 class="font-cinzel font-semibold text-white text-lg mb-4 flex items-center gap-2">
+          <span>⚠️</span> Pontos de Atenção
+        </h3>
+        <ul class="space-y-2">
+          {% for item in p.pontos_atencao %}
+          <li class="flex items-start gap-3 text-sm text-white/70">
+            <span class="text-amber-400 mt-0.5 flex-shrink-0">!</span>
+            <span>{{ item }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <!-- Decisão + Relacionamentos -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div class="glass rounded-2xl p-6">
+        <h3 class="font-cinzel font-semibold text-white text-lg mb-3 flex items-center gap-2">
+          <span>🧭</span> Tomada de Decisão
+        </h3>
+        <p class="text-white/60 text-sm leading-relaxed">{{ p.tomada_decisao }}</p>
+      </div>
+      <div class="glass rounded-2xl p-6">
+        <h3 class="font-cinzel font-semibold text-white text-lg mb-3 flex items-center gap-2">
+          <span>❤️</span> Relacionamentos
+        </h3>
+        <p class="text-white/60 text-sm leading-relaxed">{{ p.relacionamentos }}</p>
+      </div>
+    </div>
+
+    <!-- Carreira -->
+    <div class="glass rounded-2xl p-6 mb-8">
+      <h3 class="font-cinzel font-semibold text-white text-lg mb-3 flex items-center gap-2">
+        <span>💼</span> Tendências de Carreira
+      </h3>
+      <p class="text-white/60 text-sm leading-relaxed">{{ p.carreira }}</p>
+    </div>
+
+    <!-- Ranking dos arquétipos -->
+    <div class="glass rounded-2xl p-6 mb-8">
+      <h3 class="font-cinzel font-semibold text-white text-lg mb-5">Distribuição dos Arquétipos</h3>
+      <div class="space-y-3">
+        {% set max_score = dados.ranking[0][1] %}
+        {% for key, score, nome in dados.ranking[:6] %}
+        {% set pct = ((score / max_score) * 100)|round|int if max_score > 0 else 0 %}
+        <div class="flex items-center gap-3">
+          <div class="w-20 text-right text-sm font-cinzel text-white/70 flex-shrink-0">{{ orixas[key].emoji }} {{ nome }}</div>
+          <div class="flex-1 h-3 bg-white/10 rounded-full overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-1000 {% if loop.index == 1 %}bg-gradient-to-r from-mystic-600 to-mystic-400{% elif loop.index == 2 %}bg-gradient-to-r from-mystic-800 to-mystic-600{% else %}bg-white/20{% endif %}"
+              style="width:{{ pct }}%"></div>
+          </div>
+          <div class="w-10 text-left text-xs text-white/40 flex-shrink-0">{{ dados.percentuais[key] }}%</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- CTA Premium -->
+    {% if not usuario.is_premium %}
+    <div class="relative bg-gradient-to-br from-mystic-800/40 to-mystic-950/60 border border-mystic-500/30 rounded-2xl p-8 text-center mb-8">
+      <div class="text-4xl mb-4">💬</div>
+      <h3 class="font-cinzel font-bold text-2xl text-white mb-3">Converse com sua IA Personalizada</h3>
+      <p class="text-white/60 mb-6 max-w-lg mx-auto">
+        Com o plano Premium, você tem acesso a um assistente de IA calibrado no seu arquétipo <strong class="text-white/80">{{ p.nome }}</strong> para orientação em decisões, relacionamentos e carreira.
+      </p>
+      <a href="/assinar" class="btn-gold text-white px-8 py-3 rounded-xl font-semibold inline-flex items-center gap-2">
+        ✨ Assinar Premium · R$ 29,90/mês
+      </a>
+    </div>
+    {% else %}
+    <div class="text-center mb-8">
+      <a href="/chat" class="btn-gold text-white px-8 py-4 rounded-xl font-bold text-lg inline-flex items-center gap-3">
+        <span>💬</span> Conversar com minha IA
+      </a>
+    </div>
+    {% endif %}
+
+    <!-- Refazer -->
+    <div class="text-center">
+      <button onclick="confirmarRefazer()" class="text-white/30 hover:text-white/60 text-sm transition-colors underline underline-offset-2">
+        Refazer questionário
+      </button>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function confirmarRefazer() {
+  if (!confirm('Tem certeza? Seu resultado atual será apagado.')) return;
+  try {
+    await apiFetch('/api/resultado/resetar', { method: 'DELETE' });
+    window.location.href = '/questionario';
+  } catch(err) { alert(err.message); }
+}
+</script>
+{% endblock %}
