@@ -1,14 +1,20 @@
 import os
 import json
+import secrets
+from dotenv import load_dotenv
+load_dotenv(override=True)
 from typing import Optional, List
+from urllib.parse import urlencode
 from fastapi import FastAPI, Request, Depends, HTTPException, Form, Response
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
+import httpx
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 
-from database import get_db, init_db, User, Resultado, MensagemChat
+import math
+from database import get_db, init_db, User, Resultado, MensagemChat, Centro
 from auth import (
     hash_senha, verificar_senha, criar_token,
     get_usuario_atual, require_usuario, require_premium,
@@ -37,6 +43,13 @@ init_db()
 # ─── Pydantic models ─────────────────────────────────────────────────────────
 
 CODIGO_CONVITE = os.getenv("CODIGO_CONVITE", "ORIXA2024")
+
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET", "")
+GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:8000/auth/google/callback")
+GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
+GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
+GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo"
 
 class RegisterRequest(BaseModel):
     nome: str
@@ -186,10 +199,146 @@ async def assinar_page(request: Request):
     return render(request, "assinar.html", {})
 
 
+@app.get("/terreiros", response_class=HTMLResponse)
+async def terreiros_page(request: Request):
+    db = next(get_db())
+    centros = db.query(Centro).filter(Centro.ativo == True).order_by(Centro.cidade).all()
+    return render(request, "terreiros.html", {"centros": centros})
+
+
+@app.get("/api/terreiros/proximos")
+async def api_terreiros_proximos(
+    lat: float,
+    lng: float,
+    raio: float = 50,
+    db: Session = Depends(get_db),
+):
+    def haversine(lat1, lon1, lat2, lon2):
+        R = 6371
+        dlat = math.radians(lat2 - lat1)
+        dlon = math.radians(lon2 - lon1)
+        a = math.sin(dlat/2)**2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon/2)**2
+        return R * 2 * math.asin(math.sqrt(a))
+
+    centros = db.query(Centro).filter(Centro.ativo == True, Centro.latitude != None).all()
+    resultado = []
+    for c in centros:
+        dist = haversine(lat, lng, c.latitude, c.longitude)
+        if dist <= raio:
+            resultado.append({
+                "id": c.id,
+                "nome": c.nome,
+                "tradicao": c.tradicao,
+                "endereco": c.endereco,
+                "cidade": c.cidade,
+                "estado": c.estado,
+                "telefone": c.telefone,
+                "site": c.site,
+                "distancia_km": round(dist, 1),
+            })
+    resultado.sort(key=lambda x: x["distancia_km"])
+    return {"terreiros": resultado[:10], "total": len(resultado)}
+
+
 @app.get("/sair")
 async def sair(response: Response):
     resp = RedirectResponse("/", status_code=302)
     resp.delete_cookie("token")
+    return resp
+
+
+# ─── Google OAuth ─────────────────────────────────────────────────────────────
+
+@app.get("/auth/google")
+async def google_login():
+    if not GOOGLE_CLIENT_ID:
+        raise HTTPException(503, "Google OAuth não configurado. Adicione GOOGLE_CLIENT_ID no .env")
+    state = secrets.token_urlsafe(16)
+    params = urlencode({
+        "client_id": GOOGLE_CLIENT_ID,
+        "redirect_uri": GOOGLE_REDIRECT_URI,
+        "response_type": "code",
+        "scope": "openid email profile",
+        "state": state,
+        "access_type": "online",
+        "prompt": "select_account",
+    })
+    resp = RedirectResponse(f"{GOOGLE_AUTH_URL}?{params}", status_code=302)
+    resp.set_cookie("oauth_state", state, max_age=300, httponly=True, samesite="lax")
+    return resp
+
+
+@app.get("/auth/google/callback")
+async def google_callback(
+    request: Request,
+    code: str = None,
+    state: str = None,
+    error: str = None,
+    db: Session = Depends(get_db),
+):
+    if error:
+        return RedirectResponse(f"/login?erro={error}", status_code=302)
+
+    stored_state = request.cookies.get("oauth_state")
+    if not state or state != stored_state:
+        return RedirectResponse("/login?erro=state_invalido", status_code=302)
+
+    if not code:
+        return RedirectResponse("/login?erro=sem_codigo", status_code=302)
+
+    async with httpx.AsyncClient() as client:
+        token_resp = await client.post(
+            GOOGLE_TOKEN_URL,
+            data={
+                "code": code,
+                "client_id": GOOGLE_CLIENT_ID,
+                "client_secret": GOOGLE_CLIENT_SECRET,
+                "redirect_uri": GOOGLE_REDIRECT_URI,
+                "grant_type": "authorization_code",
+            },
+        )
+        if token_resp.status_code != 200:
+            return RedirectResponse("/login?erro=token_falhou", status_code=302)
+
+        token_data = token_resp.json()
+        access_token = token_data.get("access_token")
+
+        userinfo_resp = await client.get(
+            GOOGLE_USERINFO_URL,
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+        if userinfo_resp.status_code != 200:
+            return RedirectResponse("/login?erro=userinfo_falhou", status_code=302)
+
+        info = userinfo_resp.json()
+
+    google_id = info.get("id")
+    email = info.get("email", "").lower().strip()
+    nome = info.get("name", email.split("@")[0])
+
+    user = db.query(User).filter(User.google_id == google_id).first()
+    if not user:
+        user = db.query(User).filter(User.email == email).first()
+        if user:
+            user.google_id = google_id
+        else:
+            user = User(nome=nome, email=email, google_id=google_id, disclaimer_aceito=False)
+            db.add(user)
+        db.commit()
+        db.refresh(user)
+
+    token = criar_token({"sub": str(user.id)})
+    resultado = get_resultado_usuario(user.id, db)
+    if resultado:
+        redirect = "/resultado"
+    elif not user.disclaimer_aceito:
+        redirect = "/onboarding"
+    else:
+        redirect = "/questionario"
+
+    resp = RedirectResponse(redirect, status_code=302)
+    resp.set_cookie("token", token, max_age=7 * 24 * 3600, httponly=False, samesite="lax")
+    resp.delete_cookie("oauth_state")
     return resp
 
 
@@ -347,6 +496,14 @@ async def api_ativar_premium(
     usuario.is_premium = True
     db.commit()
     return {"ok": True, "redirect": "/chat", "mensagem": "Premium ativado com sucesso!"}
+
+
+@app.delete("/api/chat/limpar")
+async def api_limpar_chat(request: Request, db: Session = Depends(get_db)):
+    usuario = require_usuario(request, db)
+    db.query(MensagemChat).filter(MensagemChat.user_id == usuario.id).delete()
+    db.commit()
+    return {"ok": True}
 
 
 @app.delete("/api/resultado/resetar")

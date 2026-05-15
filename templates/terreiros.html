@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+{% block title %}Terreiros Próximos{% endblock %}
+{% block content %}
+<div class="px-4 py-12">
+  <div class="max-w-4xl mx-auto">
+
+    <!-- Header -->
+    <div class="text-center mb-10 animate-fade-in">
+      <div class="w-14 h-14 mx-auto mb-4 text-terra-500">
+        <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="20" width="30" height="16" rx="1"/>
+          <path d="M14 20 L14 14 C14 9.6 17 7 20 7 C23 7 26 9.6 26 14 L26 20"/>
+          <line x1="3" y1="36" x2="37" y2="36"/>
+          <rect x="16" y="27" width="8" height="9"/>
+        </svg>
+      </div>
+      <p class="font-cinzel text-terra-500 text-xs uppercase tracking-widest mb-2">Conexão com a Tradição</p>
+      <h1 class="font-cinzel font-bold text-4xl text-terra-800 mb-3">Terreiros Próximos</h1>
+      <p class="text-terra-600 max-w-xl mx-auto leading-relaxed">
+        A tecnologia pode indicar o caminho, mas o encontro com o sagrado acontece presencialmente.
+        Encontre um centro de confiança para sua orientação espiritual.
+      </p>
+    </div>
+
+    <!-- Aviso -->
+    <div class="glass rounded-2xl p-5 mb-8 bg-terra-50 border-terra-300">
+      <div class="flex items-start gap-3">
+        <div class="w-7 h-7 text-terra-500 flex-shrink-0 mt-0.5">
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 6 L35 32 L5 32 Z"/>
+            <line x1="20" y1="16" x2="20" y2="24"/>
+            <circle cx="20" cy="28" r="1.5" fill="currentColor" stroke="none"/>
+          </svg>
+        </div>
+        <p class="text-terra-700 text-sm leading-relaxed">
+          <strong class="text-terra-800">Lembre-se:</strong> somente um Pai ou Mãe de Santo habilitado pode determinar seu Orixá de Cabeça (Ori) através do jogo de búzios. Este app identifica tendências comportamentais — não substitui essa consulta sagrada.
+        </p>
+      </div>
+    </div>
+
+    <!-- Botão de geolocalização -->
+    <div class="text-center mb-8">
+      <button id="btnGeolocalizacao" onclick="buscarProximos()"
+        class="btn-primary text-white px-8 py-4 rounded-xl font-semibold text-lg inline-flex items-center gap-3">
+        <svg id="geoIcon" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
+          <circle cx="12" cy="12" r="8" stroke-dasharray="2 3"/>
+        </svg>
+        <span id="geoText">Encontrar Terreiros Próximos</span>
+        <span id="geoLoader" class="hidden w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin"></span>
+      </button>
+      <p class="text-terra-400 text-xs mt-3">Busca na sua região usando geolocalização · Inclui centros não cadastrados</p>
+    </div>
+
+    <!-- Erro de geolocalização -->
+    <div id="geoErro" class="hidden glass rounded-xl p-4 mb-6 bg-red-50 border-red-200 text-red-700 text-sm text-center"></div>
+
+    <!-- Resultados dinâmicos -->
+    <div id="listaTerreirosList" class="hidden mb-8">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-cinzel font-semibold text-terra-800 text-lg">Centros Encontrados</h2>
+        <span id="contadorTerreiros" class="text-terra-500 text-sm"></span>
+      </div>
+      <div id="terreirosCards" class="space-y-4"></div>
+      <div id="semResultados" class="hidden glass rounded-2xl p-8 text-center border-terra-200">
+        <div class="w-10 h-10 mx-auto mb-3 text-terra-300">
+          <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="17" cy="17" r="11"/><line x1="25" y1="25" x2="34" y2="34"/>
+            <line x1="13" y1="17" x2="21" y2="17"/>
+          </svg>
+        </div>
+        <p class="text-terra-500 text-sm">Nenhum terreiro mapeado na sua região ainda.</p>
+        <a id="linkMapas" href="#" target="_blank"
+          class="inline-flex items-center gap-2 mt-4 btn-primary text-white text-sm px-5 py-2.5 rounded-xl font-medium">
+          Buscar no Google Maps →
+        </a>
+      </div>
+    </div>
+
+    <!-- Lista cadastrada (sempre visível abaixo) -->
+    <div id="listaTodosContainer">
+      <h2 class="font-cinzel font-semibold text-terra-800 text-lg mb-4">Centros Cadastrados</h2>
+      <div class="space-y-4">
+        {% for c in centros %}
+        <div class="glass rounded-2xl p-6 hover:shadow-md transition-all">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1 flex-wrap">
+                <h3 class="font-cinzel font-semibold text-terra-800 text-lg">{{ c.nome }}</h3>
+                <span class="text-xs bg-terra-100 text-terra-600 border border-terra-200 px-2 py-0.5 rounded-full">{{ c.tradicao }}</span>
+              </div>
+              <p class="text-terra-600 text-sm mb-1">{{ c.endereco }}, {{ c.cidade }} — {{ c.estado }}</p>
+              {% if c.telefone %}<p class="text-terra-500 text-sm">{{ c.telefone }}</p>{% endif %}
+            </div>
+            <a href="https://www.google.com/maps/search/{{ c.nome | urlencode }}+{{ c.cidade | urlencode }}"
+              target="_blank"
+              class="flex-shrink-0 glass text-terra-600 hover:text-terra-800 text-xs px-3 py-2 rounded-lg transition-all hover:bg-terra-50 self-start">
+              Ver no mapa →
+            </a>
+          </div>
+        </div>
+        {% else %}
+        <div class="glass rounded-2xl p-8 text-center border-terra-200">
+          <p class="text-terra-500">Use a geolocalização para buscar centros próximos.</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+let userLat = null, userLng = null;
+
+function buscarProximos() {
+  const btn = document.getElementById('btnGeolocalizacao');
+  const loader = document.getElementById('geoLoader');
+  const icon = document.getElementById('geoIcon');
+  const text = document.getElementById('geoText');
+  const erro = document.getElementById('geoErro');
+
+  erro.classList.add('hidden');
+  btn.disabled = true;
+  loader.classList.remove('hidden');
+  icon.classList.add('hidden');
+  text.textContent = 'Localizando...';
+
+  if (!navigator.geolocation) {
+    exibirErroGeo('Seu navegador não suporta geolocalização.');
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      userLat = pos.coords.latitude;
+      userLng = pos.coords.longitude;
+      text.textContent = 'Buscando centros...';
+      try {
+        const [dbRes, osmRes] = await Promise.allSettled([
+          buscarDB(userLat, userLng),
+          buscarOverpass(userLat, userLng),
+        ]);
+
+        const dbTerreiros = dbRes.status === 'fulfilled' ? dbRes.value : [];
+        const osmTerreiros = osmRes.status === 'fulfilled' ? osmRes.value : [];
+
+        const todos = mergeTerreiros(dbTerreiros, osmTerreiros, userLat, userLng);
+        exibirResultados(todos, userLat, userLng);
+      } catch(err) {
+        exibirErroGeo('Erro ao buscar terreiros: ' + err.message);
+      } finally {
+        resetarBotao();
+      }
+    },
+    (err) => {
+      const msgs = { 1: 'Permissão negada. Ative a localização no navegador.', 2: 'Não foi possível determinar sua localização.', 3: 'Tempo esgotado.' };
+      exibirErroGeo(msgs[err.code] || 'Erro de geolocalização.');
+      resetarBotao();
+    },
+    { timeout: 12000, maximumAge: 60000 }
+  );
+}
+
+async function buscarDB(lat, lng) {
+  const data = await apiFetch(`/api/terreiros/proximos?lat=${lat}&lng=${lng}&raio=50`);
+  return (data.terreiros || []).map(c => ({
+    nome: c.nome, tradicao: c.tradicao, endereco: c.endereco,
+    cidade: c.cidade, estado: c.estado, telefone: c.telefone,
+    distancia_km: c.distancia_km, lat: null, lng: null, fonte: 'cadastro'
+  }));
+}
+
+async function buscarOverpass(lat, lng) {
+  const query = `
+    [out:json][timeout:15];
+    (
+      node["amenity"="place_of_worship"]["religion"~"candomblé|umbanda|afro",i](around:25000,${lat},${lng});
+      node["name"~"terreiro|candomblé|umbanda|ilê axé|tenda espírita|centro de umbanda|axé|pai de santo|mãe de santo",i](around:25000,${lat},${lng});
+      way["name"~"terreiro|candomblé|umbanda|ilê|axé",i](around:25000,${lat},${lng});
+    );
+    out body;
+  `.trim();
+
+  const res = await fetch('https://overpass-api.de/api/interpreter', {
+    method: 'POST',
+    body: 'data=' + encodeURIComponent(query),
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+  });
+  if (!res.ok) return [];
+  const data = await res.json();
+  return (data.elements || [])
+    .filter(e => e.tags && e.tags.name)
+    .map(e => ({
+      nome: e.tags.name,
+      tradicao: e.tags.religion || e.tags['religion:denomination'] || 'Tradição Afro-Brasileira',
+      endereco: [e.tags['addr:street'], e.tags['addr:housenumber']].filter(Boolean).join(', ') || '',
+      cidade: e.tags['addr:city'] || '',
+      estado: e.tags['addr:state'] || '',
+      telefone: e.tags.phone || e.tags['contact:phone'] || null,
+      lat: e.lat || null, lng: e.lon || null,
+      distancia_km: e.lat ? haversine(lat, lng, e.lat, e.lon) : null,
+      fonte: 'osm'
+    }));
+}
+
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dlat = (lat2 - lat1) * Math.PI / 180;
+  const dlon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dlat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dlon/2)**2;
+  return Math.round(R * 2 * Math.asin(Math.sqrt(a)) * 10) / 10;
+}
+
+function mergeTerreiros(db, osm, lat, lng) {
+  const todos = [...db];
+  const nomesCadastrados = new Set(db.map(t => t.nome.toLowerCase().trim()));
+  osm.forEach(t => {
+    if (!nomesCadastrados.has(t.nome.toLowerCase().trim())) todos.push(t);
+  });
+  todos.sort((a, b) => (a.distancia_km || 999) - (b.distancia_km || 999));
+  return todos.slice(0, 15);
+}
+
+function exibirResultados(terreiros, lat, lng) {
+  document.getElementById('listaTodosContainer').classList.add('hidden');
+  const lista = document.getElementById('listaTerreirosList');
+  const cards = document.getElementById('terreirosCards');
+  const sem = document.getElementById('semResultados');
+  const contador = document.getElementById('contadorTerreiros');
+
+  contador.textContent = `${terreiros.length} centro${terreiros.length !== 1 ? 's' : ''} encontrado${terreiros.length !== 1 ? 's' : ''}`;
+  cards.innerHTML = '';
+  lista.classList.remove('hidden');
+
+  if (terreiros.length === 0) {
+    sem.classList.remove('hidden');
+    document.getElementById('linkMapas').href =
+      `https://www.google.com/maps/search/terreiro+candomblé+umbanda/@${lat},${lng},13z`;
+    return;
+  }
+
+  sem.classList.add('hidden');
+  terreiros.forEach(c => {
+    const mapsQuery = c.lat && c.lng
+      ? `https://www.google.com/maps?q=${c.lat},${c.lng}`
+      : `https://www.google.com/maps/search/${encodeURIComponent(c.nome + ' ' + c.cidade)}`;
+
+    const badge = c.fonte === 'cadastro'
+      ? `<span class="text-xs bg-sage-100 text-sage-600 border border-sage-200 px-2 py-0.5 rounded-full">Cadastrado</span>`
+      : `<span class="text-xs bg-terra-100 text-terra-500 border border-terra-200 px-2 py-0.5 rounded-full">OpenStreetMap</span>`;
+
+    const card = document.createElement('div');
+    card.className = 'glass rounded-2xl p-6 hover:shadow-md transition-all animate-fade-in';
+    card.innerHTML = `
+      <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-1 flex-wrap">
+            <h3 class="font-cinzel font-semibold text-terra-800 text-base">${c.nome}</h3>
+            <span class="text-xs bg-terra-100 text-terra-600 border border-terra-200 px-2 py-0.5 rounded-full">${c.tradicao}</span>
+            ${badge}
+            ${c.distancia_km ? `<span class="text-xs text-terra-400 font-medium">${c.distancia_km} km</span>` : ''}
+          </div>
+          ${c.endereco || c.cidade ? `<p class="text-terra-600 text-sm mb-1">${[c.endereco, c.cidade, c.estado].filter(Boolean).join(', ')}</p>` : ''}
+          ${c.telefone ? `<p class="text-terra-500 text-sm">${c.telefone}</p>` : ''}
+        </div>
+        <a href="${mapsQuery}" target="_blank"
+          class="flex-shrink-0 glass text-terra-600 hover:text-terra-800 text-xs px-3 py-2 rounded-lg transition-all hover:bg-terra-50 self-start">
+          Ver no mapa →
+        </a>
+      </div>
+    `;
+    cards.appendChild(card);
+  });
+}
+
+function exibirErroGeo(msg) {
+  const el = document.getElementById('geoErro');
+  el.textContent = msg;
+  el.classList.remove('hidden');
+}
+
+function resetarBotao() {
+  const btn = document.getElementById('btnGeolocalizacao');
+  btn.disabled = false;
+  document.getElementById('geoLoader').classList.add('hidden');
+  document.getElementById('geoIcon').classList.remove('hidden');
+  document.getElementById('geoText').textContent = 'Buscar novamente';
+}
+</script>
+{% endblock %}

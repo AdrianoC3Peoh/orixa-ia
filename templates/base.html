@@ -3,83 +3,150 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{% block title %}Orixá IA{% endblock %} — Autoconhecimento Comportamental</title>
+  <title>{% block title %}Orixá IA{% endblock %} — Autoconhecimento</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            gold: { 400: '#F59E0B', 500: '#D97706', 600: '#B45309' },
-            mystic: {
-              50: '#faf5ff', 100: '#f3e8ff', 200: '#e9d5ff',
-              300: '#d8b4fe', 400: '#c084fc', 500: '#a855f7',
-              600: '#9333ea', 700: '#7c3aed', 800: '#6d28d9', 900: '#4c1d95',
-              950: '#1e0a47',
+            terra: {
+              50: '#FDF8F0', 100: '#F9EFD8', 200: '#F2E4CC',
+              300: '#E8CFA6', 400: '#D4A843', 500: '#B5702A',
+              600: '#9A5E22', 700: '#7D4C1A', 800: '#5F3912', 900: '#3D230B'
+            },
+            sage: {
+              100: '#EDF2EC', 200: '#D5E4D3', 300: '#AECBAB',
+              400: '#7DAF79', 500: '#5B8C5A', 600: '#477048',
+            },
+            slate2: {
+              100: '#EEF3F7', 200: '#D4E2EB', 300: '#AABFCE',
+              400: '#7B9AAF', 500: '#5C7E96', 600: '#446478',
             }
           },
           fontFamily: {
-            serif: ['Georgia', 'serif'],
+            serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
             sans: ['Inter', 'system-ui', 'sans-serif'],
           },
           animation: {
-            'fade-in': 'fadeIn 0.6s ease-out',
-            'slide-up': 'slideUp 0.5s ease-out',
+            'fade-in': 'fadeIn 0.5s ease-out',
+            'slide-up': 'slideUp 0.45s ease-out',
             'pulse-slow': 'pulse 3s infinite',
-            'float': 'float 6s ease-in-out infinite',
+            'float': 'float 5s ease-in-out infinite',
           },
           keyframes: {
             fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
-            slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
-            float: { '0%,100%': { transform: 'translateY(0px)' }, '50%': { transform: 'translateY(-10px)' } },
+            slideUp: { '0%': { transform: 'translateY(16px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+            float: { '0%,100%': { transform: 'translateY(0px)' }, '50%': { transform: 'translateY(-8px)' } },
           }
         }
       }
     }
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     body { font-family: 'Inter', sans-serif; }
-    .font-cinzel { font-family: 'Cinzel', serif; }
-    .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
-    .glass-dark { background: rgba(0,0,0,0.3); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
-    .text-gradient { background: linear-gradient(135deg, #F59E0B, #A855F7, #3B82F6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .btn-primary { background: linear-gradient(135deg, #7c3aed, #4f46e5); transition: all 0.3s; }
-    .btn-primary:hover { background: linear-gradient(135deg, #9333ea, #6366f1); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(124,58,237,0.4); }
-    .btn-gold { background: linear-gradient(135deg, #D97706, #F59E0B); transition: all 0.3s; }
-    .btn-gold:hover { background: linear-gradient(135deg, #B45309, #D97706); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(217,119,6,0.4); }
-    .star { position: fixed; border-radius: 50%; background: white; animation: pulse 3s infinite; pointer-events: none; z-index: 0; }
+    .font-cinzel { font-family: 'Outfit', sans-serif; letter-spacing: -0.01em; }
+
+    /* Cartão base */
+    .glass {
+      background: #FFFFFF;
+      border: 1px solid #E5D5BE;
+      box-shadow: 0 2px 16px rgba(61,35,11,0.06);
+    }
+    /* Nav e áreas de header */
+    .glass-dark {
+      background: #FDFAF4;
+      border-color: #E5D5BE;
+    }
+
+    /* Gradiente de texto → cor sólida terracota */
+    .text-gradient {
+      color: #B5702A;
+      background: none;
+      -webkit-background-clip: unset;
+      -webkit-text-fill-color: #B5702A;
+      background-clip: unset;
+    }
+
+    /* Botões */
+    .btn-primary {
+      background: #B5702A;
+      color: white;
+      transition: all 0.2s;
+    }
+    .btn-primary:hover {
+      background: #9A5E22;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(181,112,42,0.28);
+    }
+    .btn-gold {
+      background: linear-gradient(135deg, #B5702A, #D4A843);
+      color: white;
+      transition: all 0.2s;
+    }
+    .btn-gold:hover {
+      background: linear-gradient(135deg, #9A5E22, #B5702A);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(181,112,42,0.32);
+    }
+
+    /* Textura suave de fundo */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(181,112,42,0.012) 2px,
+          rgba(181,112,42,0.012) 4px
+        );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Scrollbar */
     ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #1e0a47; }
-    ::-webkit-scrollbar-thumb { background: #7c3aed; border-radius: 3px; }
+    ::-webkit-scrollbar-track { background: #F2E4CC; }
+    ::-webkit-scrollbar-thumb { background: #D4A843; border-radius: 3px; }
+
+    /* Ornamento decorativo no topo */
+    .ornament {
+      display: inline-block;
+      color: #D4A843;
+      opacity: 0.7;
+      font-size: 1.1em;
+      letter-spacing: 0.15em;
+    }
   </style>
 </head>
-<body class="min-h-full bg-gradient-to-br from-gray-950 via-mystic-950 to-gray-950 text-white">
-
-  <!-- Stars background -->
-  <div id="stars" class="fixed inset-0 overflow-hidden pointer-events-none z-0"></div>
+<body class="min-h-full bg-terra-200 text-terra-900">
 
   <!-- Navbar -->
-  <nav class="relative z-20 border-b border-white/10 glass-dark">
+  <nav class="relative z-20 glass-dark border-b border-terra-300/60 shadow-sm">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
-        <a href="/" class="flex items-center gap-2">
-          <span class="text-2xl">✨</span>
-          <span class="font-cinzel font-bold text-xl text-gradient">Orixá IA</span>
+        <a href="/" class="flex items-center gap-3">
+          <span class="ornament text-xl">✦</span>
+          <span class="font-cinzel font-bold text-xl text-terra-700 tracking-wide">Orixá IA</span>
         </a>
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-4">
           {% if usuario %}
             {% if resultado %}
-            <a href="/dashboard" class="text-white/70 hover:text-white text-sm transition-colors">Meu Perfil</a>
-            <a href="/chat" class="text-white/70 hover:text-white text-sm transition-colors">Chat</a>
+            <a href="/dashboard" class="text-terra-700 hover:text-terra-500 text-sm font-medium transition-colors">Meu Perfil</a>
+            <a href="/chat" class="text-terra-700 hover:text-terra-500 text-sm font-medium transition-colors">Chat</a>
+            <a href="/terreiros" class="text-terra-700 hover:text-terra-500 text-sm font-medium transition-colors">Terreiros</a>
             {% endif %}
             {% if usuario.is_premium %}
-            <span class="text-xs bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-1 rounded-full">✨ Premium</span>
+            <span class="text-xs bg-terra-100 text-terra-600 border border-terra-300 px-2.5 py-1 rounded-full font-medium">✦ Premium</span>
             {% endif %}
-            <a href="/sair" class="text-white/50 hover:text-white text-sm transition-colors">Sair</a>
+            <a href="/sair" class="text-terra-500 hover:text-terra-700 text-sm transition-colors">Sair</a>
           {% else %}
-            <a href="/login" class="text-white/70 hover:text-white text-sm transition-colors">Entrar</a>
+            <a href="/login" class="text-terra-700 hover:text-terra-500 text-sm font-medium transition-colors">Entrar</a>
             <a href="/cadastro" class="btn-primary text-white text-sm px-4 py-2 rounded-lg font-medium">Começar</a>
           {% endif %}
         </div>
@@ -93,31 +160,17 @@
   </main>
 
   <!-- Footer -->
-  <footer class="relative z-10 border-t border-white/5 mt-20 py-8">
-    <div class="max-w-6xl mx-auto px-4 text-center text-white/30 text-xs space-y-1">
-      <p>Orixá IA — Diagnóstico Comportamental Estatístico</p>
-      <p>Este aplicativo utiliza modelos estatísticos e comportamentais. Não possui finalidade religiosa, litúrgica ou iniciática.</p>
+  <footer class="relative z-10 border-t border-terra-300/50 mt-20 py-10 bg-terra-100/60">
+    <div class="max-w-6xl mx-auto px-4 text-center space-y-2">
+      <p class="font-cinzel text-terra-600 text-sm tracking-wide">✦ Orixá IA ✦</p>
+      <p class="text-terra-500 text-xs max-w-2xl mx-auto leading-relaxed">
+        Este aplicativo utiliza modelos estatísticos e comportamentais inspirados nos arquétipos dos Orixás.
+        Não possui finalidade religiosa, litúrgica ou iniciática. Para orientação espiritual, consulte um terreiro.
+      </p>
     </div>
   </footer>
 
   <script>
-    // Gera estrelas no background
-    const starsEl = document.getElementById('stars');
-    for (let i = 0; i < 80; i++) {
-      const s = document.createElement('div');
-      s.className = 'star';
-      const size = Math.random() * 2.5 + 0.5;
-      s.style.cssText = `
-        width:${size}px;height:${size}px;
-        top:${Math.random()*100}%;left:${Math.random()*100}%;
-        opacity:${Math.random()*0.6+0.1};
-        animation-delay:${Math.random()*3}s;
-        animation-duration:${2+Math.random()*4}s;
-      `;
-      starsEl.appendChild(s);
-    }
-
-    // Persiste token no cookie após login
     function salvarToken(token) {
       document.cookie = `token=${token}; path=/; max-age=${7*24*3600}; SameSite=Lax`;
     }

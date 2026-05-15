@@ -7,6 +7,7 @@ ORIXAS: Dict[str, dict] = {
         "cor": "#4A90D9",
         "cor_secundaria": "#1a3a5c",
         "emoji": "⚔️",
+        "icone_svg": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="18"/><line x1="8" y1="8" x2="16" y2="8"/><path d="M10 18 L12 22 L14 18"/></svg>',
         "gradiente": "from-blue-600 to-blue-900",
         "descricao_curta": "Arquétipo da ação, determinação e abertura de caminhos.",
         "descricao": (
@@ -52,6 +53,7 @@ ORIXAS: Dict[str, dict] = {
         "cor": "#2ECC71",
         "cor_secundaria": "#1a4a2e",
         "emoji": "🏹",
+        "icone_svg": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18 Q2 12 6 6"/><line x1="6" y1="6" x2="6" y2="18"/><line x1="6" y1="12" x2="20" y2="12"/><polyline points="17,9 20,12 17,15"/></svg>',
         "gradiente": "from-green-600 to-green-900",
         "descricao_curta": "Arquétipo do foco, estratégia e conexão com o essencial.",
         "descricao": (
@@ -97,6 +99,7 @@ ORIXAS: Dict[str, dict] = {
         "cor": "#E74C3C",
         "cor_secundaria": "#5c1a1a",
         "emoji": "⚡",
+        "icone_svg": '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="15,2 9,13 13,13 9,22 15,11 11,11"/></svg>',
         "gradiente": "from-red-600 to-red-900",
         "descricao_curta": "Arquétipo da justiça, autoridade e poder equilibrado.",
         "descricao": (
@@ -142,6 +145,7 @@ ORIXAS: Dict[str, dict] = {
         "cor": "#E67E22",
         "cor_secundaria": "#5c3a1a",
         "emoji": "🌪️",
+        "icone_svg": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="19" x2="19" y2="5"/><line x1="5" y1="5" x2="19" y2="19"/><line x1="5" y1="5" x2="3" y2="3"/><line x1="19" y1="5" x2="21" y2="3"/></svg>',
         "gradiente": "from-orange-600 to-orange-900",
         "descricao_curta": "Arquétipo da paixão, liberdade e transformação contínua.",
         "descricao": (
@@ -187,6 +191,7 @@ ORIXAS: Dict[str, dict] = {
         "cor": "#3498DB",
         "cor_secundaria": "#1a2a5c",
         "emoji": "🌊",
+        "icone_svg": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M12 3 C7 3 3 7 3 12 C3 17 7 21 12 21 C17 21 21 17 21 12 C21 7 17 3 12 3Z" stroke-width="2"/><line x1="12" y1="3" x2="12" y2="21" stroke-width="1.5"/><line x1="12" y1="3" x2="5" y2="18" stroke-width="1.5"/><line x1="12" y1="3" x2="19" y2="18" stroke-width="1.5"/><path d="M4 23 Q7 22 10 23 Q13 24 16 23 Q19 22 22 23" stroke-width="1.5"/></svg>',
         "gradiente": "from-blue-500 to-indigo-900",
         "descricao_curta": "Arquétipo da emoção profunda, proteção e conexão.",
         "descricao": (
@@ -231,6 +236,7 @@ ORIXAS: Dict[str, dict] = {
         "cor": "#F1C40F",
         "cor_secundaria": "#5c4a00",
         "emoji": "✨",
+        "icone_svg": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="10" r="7"/><line x1="12" y1="17" x2="12" y2="22"/><line x1="9" y1="22" x2="15" y2="22"/></svg>',
         "gradiente": "from-yellow-500 to-yellow-900",
         "descricao_curta": "Arquétipo do amor, criatividade, beleza e abundância.",
         "descricao": (
@@ -275,6 +281,7 @@ ORIXAS: Dict[str, dict] = {
         "cor": "#ECF0F1",
         "cor_secundaria": "#2c3e50",
         "emoji": "🕊️",
+        "icone_svg": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="2" x2="12" y2="22"/><line x1="5" y1="9" x2="19" y2="9"/></svg>',
         "gradiente": "from-gray-300 to-gray-700",
         "descricao_curta": "Arquétipo da sabedoria, paz e equilíbrio profundo.",
         "descricao": (
@@ -319,6 +326,7 @@ ORIXAS: Dict[str, dict] = {
         "cor": "#8E44AD",
         "cor_secundaria": "#2c1a4a",
         "emoji": "🌑",
+        "icone_svg": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="15" x2="12" y2="22" stroke-width="2.5"/><path d="M12 5 C8 5 5 7.5 5 10.5 C5 13.5 8 15 12 15 C16 15 19 13.5 19 10.5 C19 7.5 16 5 12 5Z"/><circle cx="12" cy="4.5" r="2.5" fill="currentColor" stroke="none"/></svg>',
         "gradiente": "from-purple-700 to-purple-950",
         "descricao_curta": "Arquétipo da resiliência, transformação e sabedoria pela dor.",
         "descricao": (
@@ -364,6 +372,7 @@ ORIXAS: Dict[str, dict] = {
         "cor": "#1ABC9C",
         "cor_secundaria": "#0a4a3a",
         "emoji": "🌈",
+        "icone_svg": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M3 19 Q12 3 21 19" stroke-width="2.5"/><path d="M6 19 Q12 7 18 19" stroke-width="2"/><circle cx="3" cy="19" r="1.5" fill="currentColor" stroke="none"/><circle cx="21" cy="19" r="1.5" fill="currentColor" stroke="none"/></svg>',
         "gradiente": "from-teal-500 to-teal-900",
         "descricao_curta": "Arquétipo da dualidade, adaptação e movimento contínuo.",
         "descricao": (
@@ -409,6 +418,7 @@ ORIXAS: Dict[str, dict] = {
         "cor": "#9B59B6",
         "cor_secundaria": "#2c1a4a",
         "emoji": "🌸",
+        "icone_svg": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="14" x2="12" y2="22" stroke-width="2.5"/><path d="M8 4 Q7 7 8 11"/><path d="M10.5 3 Q10 6 10.5 10"/><path d="M13.5 3 Q14 6 13.5 10"/><path d="M16 4 Q17 7 16 11"/><path d="M8 11 Q10 14 12 14 Q14 14 16 11 Q14 10 12 10 Q10 10 8 11Z"/></svg>',
         "gradiente": "from-violet-600 to-violet-950",
         "descricao_curta": "Arquétipo da memória, tradição e sabedoria ancestral.",
         "descricao": (
@@ -797,21 +807,22 @@ def calcular_resultado(respostas: dict) -> dict:
     }
 
 
-SYSTEM_PROMPT_TEMPLATE = """Você é o assistente de autoconhecimento e orientação comportamental do app Orixá IA.
+SYSTEM_PROMPT_TEMPLATE = """Você é um conselheiro de autoconhecimento do app Orixá IA, especializado nos padrões comportamentais dos arquétipos ancestrais afro-brasileiros.
 
-O usuário teve o seguinte diagnóstico estatístico-comportamental:
-- **Arquétipo Primário**: {primario} — {primario_subtitulo}
-- **Arquétipo Secundário**: {secundario} — {secundario_subtitulo}
+O usuário tem o seguinte perfil comportamental:
+- **Orixá de Frente**: {primario} — {primario_subtitulo}
+- **Orixá de Cabeça**: {secundario} — {secundario_subtitulo}
 
-**Descrição do perfil primário**: {primario_descricao}
+**Sobre o perfil primário**:
+{primario_descricao}
 
-**Pontos fortes do perfil**:
+**Forças identificadas**:
 {pontos_fortes}
 
 **Pontos de atenção**:
 {pontos_atencao}
 
-**Padrão de tomada de decisão**:
+**Padrão de decisão**:
 {tomada_decisao}
 
 **Padrão em relacionamentos**:
@@ -819,18 +830,25 @@ O usuário teve o seguinte diagnóstico estatístico-comportamental:
 
 ---
 
-INSTRUÇÕES IMPORTANTES:
-1. Você orienta EXCLUSIVAMENTE com base nos padrões comportamentais e estatísticos dos arquétipos
-2. NUNCA faça afirmações religiosas, espirituais ou litúrgicas
-3. Use sempre linguagem como "seu perfil tende a", "estatisticamente, pessoas com esse arquétipo", "a tendência comportamental indica"
-4. Quando o usuário perguntar sobre decisões, relacionamentos, carreira ou comportamento, responda com base no arquétipo dele
-5. Seja empático, perspicaz e prático
-6. Inclua o arquétipo secundário quando relevante para enriquecer a análise
-7. Seja conciso e direto — respostas longas demais perdem o impacto
-8. NÃO substitua orientação psicológica, médica ou espiritual profissional
-9. Quando não souber, diga que precisa de mais informações sobre a situação específica do usuário
+COMO VOCÊ DEVE RESPONDER:
 
-Você pode responder sobre: tomada de decisão, relacionamentos, carreira, comportamento em grupo, padrões emocionais, pontos cegos e forças do usuário — sempre conectando ao arquétipo.
+1. **Voz de conselheiro, em primeira pessoa**: Fale como alguém que conhece profundamente o perfil do usuário. Use frases como "Com base no seu perfil...", "Percebo que você tende a...", "Quem carrega a energia de {primario} geralmente...", "Uma reflexão importante para você...". Não seja frio nem clínico — seja como um sábio que aconselha com cuidado.
+
+2. **Respeito à tradição**: Os Orixás são entidades sagradas para milhões de pessoas no Brasil e no mundo. Trate seus arquétipos com seriedade e reverência. Nunca banalize, nunca faça piada, nunca reduza a tradição a um simples teste de personalidade.
+
+3. **Clareza sobre probabilidades**: Deixe claro que suas orientações são baseadas em padrões comportamentais identificados — tendências prováveis, não certezas absolutas. Use "é provável que", "muitas pessoas com esse perfil", "uma tendência comum é", "não é uma regra, mas...".
+
+4. **Recomendação ao terreiro**: Sempre que o usuário perguntar sobre questões espirituais, seu "orixá de cabeça", destino, missão de vida ou temas de natureza sagrada, inclua ao final: *"Lembre-se: para uma orientação espiritual verdadeira, o ideal é visitar um terreiro e consultar um Pai ou Mãe de Santo de confiança. O jogo de búzios é o caminho legítimo para conhecer seu Ori — algo que nenhum aplicativo pode substituir."*
+
+5. **Inclua o secundário**: Quando relevante, mencione como a influência de {secundario} complementa, tensiona ou enriquece o perfil primário.
+
+6. **Tom**: Sério, cálido, respeitoso. Sem gírias, sem excessiva informalidade, mas também sem frieza técnica. Pense em como um ancião sábio falaria — com autoridade e cuidado ao mesmo tempo.
+
+7. **Tamanho**: Respostas de 3 a 5 parágrafos. Substanciais, mas sem prolixidade. Cada parágrafo deve trazer uma reflexão nova.
+
+8. **Limites**: Não faça diagnósticos médicos ou psicológicos. Se o usuário trouxer algo que exige atenção profissional de saúde, acolha e indique que busque apoio especializado.
+
+Você pode orientar sobre: decisões de vida, relacionamentos, carreira, padrões emocionais, pontos cegos, forças, propósito — sempre conectando ao arquétipo com respeito e profundidade.
 """
 
 
