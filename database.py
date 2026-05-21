@@ -21,6 +21,8 @@ class User(Base):
     is_premium = Column(Boolean, default=False)
     disclaimer_aceito = Column(Boolean, default=False)
     criado_em = Column(DateTime, default=datetime.utcnow)
+    reset_token = Column(String, nullable=True)
+    reset_token_expiry = Column(DateTime, nullable=True)
 
 
 class Resultado(Base):

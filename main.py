@@ -1,6 +1,7 @@
 import os
 import json
 import secrets
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 load_dotenv(override=True)
 from typing import Optional, List
@@ -46,10 +47,23 @@ CODIGO_CONVITE = os.getenv("CODIGO_CONVITE", "ORIXA2024")
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET", "")
-GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:8000/auth/google/callback")
+GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "")  # fallback manual
 GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
 GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo"
+
+
+def get_redirect_uri(request: Request) -> str:
+    """Detecta automaticamente a URL pública atual (ngrok, Railway, localhost)."""
+    if GOOGLE_REDIRECT_URI:
+        return GOOGLE_REDIRECT_URI
+    # Detecta proxy reverso (ngrok, Railway, Heroku, etc.)
+    proto = request.headers.get("x-forwarded-proto") or request.url.scheme
+    host = request.headers.get("x-forwarded-host") or request.headers.get("host", "localhost:8000")
+    # Remove porta se for https:443 ou http:80
+    if (proto == "https" and host.endswith(":443")) or (proto == "http" and host.endswith(":80")):
+        host = host.rsplit(":", 1)[0]
+    return f"{proto}://{host}/auth/google/callback"
 
 class RegisterRequest(BaseModel):
     nome: str
@@ -117,6 +131,71 @@ async def login_page(request: Request):
     if usuario:
         return RedirectResponse("/dashboard")
     return render(request, "login.html")
+
+
+@app.get("/esqueci-senha", response_class=HTMLResponse)
+async def esqueci_senha_page(request: Request):
+    return render(request, "esqueci_senha.html")
+
+
+@app.get("/resetar-senha", response_class=HTMLResponse)
+async def resetar_senha_page(request: Request, token: str = None):
+    if not token:
+        return RedirectResponse("/esqueci-senha")
+    db = next(get_db())
+    user = db.query(User).filter(User.reset_token == token).first()
+    if not user or not user.reset_token_expiry or user.reset_token_expiry < datetime.utcnow():
+        return render(request, "esqueci_senha.html", {"erro_token": True})
+    return render(request, "resetar_senha.html", {"reset_token": token})
+
+
+@app.post("/api/auth/esqueci-senha")
+async def api_esqueci_senha(request: Request, db: Session = Depends(get_db)):
+    body = await request.json()
+    email = body.get("email", "").lower().strip()
+    user = db.query(User).filter(User.email == email).first()
+
+    # Gera token mesmo se user não existe (evita enumerar e-mails)
+    token = secrets.token_urlsafe(32)
+    link = None
+
+    if user:
+        user.reset_token = token
+        user.reset_token_expiry = datetime.utcnow() + timedelta(hours=1)
+        db.commit()
+        # Detecta URL base para construir o link
+        proto = request.headers.get("x-forwarded-proto") or request.url.scheme
+        host = request.headers.get("x-forwarded-host") or request.headers.get("host", "localhost:8000")
+        link = f"{proto}://{host}/resetar-senha?token={token}"
+        # Em produção: enviar e-mail. Em dev: retorna o link diretamente.
+
+    return JSONResponse({
+        "ok": True,
+        "mensagem": "Se esse e-mail existir em nosso sistema, você receberá as instruções.",
+        # Apenas em modo dev — remover em produção quando e-mail estiver configurado
+        "dev_link": link,
+    })
+
+
+@app.post("/api/auth/resetar-senha")
+async def api_resetar_senha(request: Request, db: Session = Depends(get_db)):
+    body = await request.json()
+    token = body.get("token", "")
+    nova_senha = body.get("nova_senha", "")
+
+    if not token or len(nova_senha) < 6:
+        raise HTTPException(400, "Dados inválidos. Senha deve ter ao menos 6 caracteres.")
+
+    user = db.query(User).filter(User.reset_token == token).first()
+    if not user or not user.reset_token_expiry or user.reset_token_expiry < datetime.utcnow():
+        raise HTTPException(400, "Link de recuperação inválido ou expirado.")
+
+    user.senha_hash = hash_senha(nova_senha)
+    user.reset_token = None
+    user.reset_token_expiry = None
+    db.commit()
+
+    return JSONResponse({"ok": True, "mensagem": "Senha alterada com sucesso!"})
 
 
 @app.get("/onboarding", response_class=HTMLResponse)
@@ -250,13 +329,14 @@ async def sair(response: Response):
 # ─── Google OAuth ─────────────────────────────────────────────────────────────
 
 @app.get("/auth/google")
-async def google_login():
+async def google_login(request: Request):
     if not GOOGLE_CLIENT_ID:
         raise HTTPException(503, "Google OAuth não configurado. Adicione GOOGLE_CLIENT_ID no .env")
     state = secrets.token_urlsafe(16)
+    redirect_uri = get_redirect_uri(request)
     params = urlencode({
         "client_id": GOOGLE_CLIENT_ID,
-        "redirect_uri": GOOGLE_REDIRECT_URI,
+        "redirect_uri": redirect_uri,
         "response_type": "code",
         "scope": "openid email profile",
         "state": state,
@@ -265,6 +345,7 @@ async def google_login():
     })
     resp = RedirectResponse(f"{GOOGLE_AUTH_URL}?{params}", status_code=302)
     resp.set_cookie("oauth_state", state, max_age=300, httponly=True, samesite="lax")
+    resp.set_cookie("oauth_redirect_uri", redirect_uri, max_age=300, httponly=True, samesite="lax")
     return resp
 
 
@@ -286,6 +367,9 @@ async def google_callback(
     if not code:
         return RedirectResponse("/login?erro=sem_codigo", status_code=302)
 
+    # Usa a mesma redirect_uri que foi enviada no início do fluxo
+    callback_redirect_uri = request.cookies.get("oauth_redirect_uri") or get_redirect_uri(request)
+
     async with httpx.AsyncClient() as client:
         token_resp = await client.post(
             GOOGLE_TOKEN_URL,
@@ -293,7 +377,7 @@ async def google_callback(
                 "code": code,
                 "client_id": GOOGLE_CLIENT_ID,
                 "client_secret": GOOGLE_CLIENT_SECRET,
-                "redirect_uri": GOOGLE_REDIRECT_URI,
+                "redirect_uri": callback_redirect_uri,
                 "grant_type": "authorization_code",
             },
         )

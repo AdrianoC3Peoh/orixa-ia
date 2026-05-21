@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}Nova Senha{% endblock %}
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-4 py-16">
+  <div class="w-full max-w-md animate-slide-up">
+    <div class="text-center mb-8">
+      <span class="ornament text-4xl block mb-4">✦</span>
+      <h1 class="font-cinzel font-bold text-3xl text-terra-800 mb-2">Criar Nova Senha</h1>
+      <p class="text-terra-500">Escolha uma senha forte para sua conta</p>
+    </div>
+
+    <div class="glass rounded-2xl p-8">
+      <div id="sucesso" class="hidden mb-5 bg-green-50 border border-green-200 text-green-800 text-sm px-4 py-4 rounded-xl">
+        <p class="font-medium">✓ Senha alterada com sucesso!</p>
+        <p class="mt-1">Você já pode <a href="/login" class="underline font-medium">fazer login</a> com a nova senha.</p>
+      </div>
+
+      <div id="erro" class="hidden mb-4 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl"></div>
+
+      <form id="formReset" class="space-y-5">
+        <input type="hidden" id="resetToken" value="{{ reset_token }}" />
+
+        <div>
+          <label class="block text-terra-700 text-sm font-medium mb-2">Nova Senha</label>
+          <div class="relative">
+            <input id="novaSenha" type="password" required placeholder="Mínimo 6 caracteres" minlength="6"
+              class="w-full bg-terra-50 border border-terra-200 rounded-xl px-4 py-3 pr-12 text-terra-800 placeholder-terra-400 focus:outline-none focus:border-terra-500 transition-colors" />
+            <button type="button" onclick="toggleSenha('novaSenha','olho1a','olho1b')" class="absolute right-3 top-1/2 -translate-y-1/2 text-terra-400 hover:text-terra-600 p-1">
+              <svg id="olho1a" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg id="olho1b" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 hidden">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-terra-700 text-sm font-medium mb-2">Confirmar Nova Senha</label>
+          <div class="relative">
+            <input id="confirmarSenha" type="password" required placeholder="Repita a nova senha"
+              class="w-full bg-terra-50 border border-terra-200 rounded-xl px-4 py-3 pr-12 text-terra-800 placeholder-terra-400 focus:outline-none focus:border-terra-500 transition-colors" />
+            <button type="button" onclick="toggleSenha('confirmarSenha','olho2a','olho2b')" class="absolute right-3 top-1/2 -translate-y-1/2 text-terra-400 hover:text-terra-600 p-1">
+              <svg id="olho2a" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg id="olho2b" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 hidden">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" id="btnSalvar"
+          class="btn-primary w-full text-white py-3 rounded-xl font-semibold text-base flex items-center justify-center gap-2">
+          <span id="btnText">Salvar nova senha</span>
+          <span id="btnLoader" class="hidden w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin"></span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+function toggleSenha(inputId, iconAberto, iconFechado) {
+  const input = document.getElementById(inputId);
+  const a = document.getElementById(iconAberto);
+  const f = document.getElementById(iconFechado);
+  if (input.type === 'password') {
+    input.type = 'text'; a.classList.add('hidden'); f.classList.remove('hidden');
+  } else {
+    input.type = 'password'; a.classList.remove('hidden'); f.classList.add('hidden');
+  }
+}
+
+document.getElementById('formReset').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('btnSalvar');
+  const loader = document.getElementById('btnLoader');
+  const text = document.getElementById('btnText');
+  const erro = document.getElementById('erro');
+  const sucesso = document.getElementById('sucesso');
+
+  const nova = document.getElementById('novaSenha').value;
+  const confirma = document.getElementById('confirmarSenha').value;
+  const token = document.getElementById('resetToken').value;
+
+  erro.classList.add('hidden');
+
+  if (nova !== confirma) {
+    erro.classList.remove('hidden');
+    erro.textContent = 'As senhas não coincidem.';
+    return;
+  }
+  if (nova.length < 6) {
+    erro.classList.remove('hidden');
+    erro.textContent = 'A senha deve ter ao menos 6 caracteres.';
+    return;
+  }
+
+  btn.disabled = true; loader.classList.remove('hidden'); text.textContent = 'Salvando...';
+
+  try {
+    const res = await fetch('/api/auth/resetar-senha', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, nova_senha: nova })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Erro ao redefinir senha.');
+    sucesso.classList.remove('hidden');
+    document.getElementById('formReset').classList.add('hidden');
+  } catch(err) {
+    erro.classList.remove('hidden');
+    erro.textContent = err.message;
+  } finally {
+    btn.disabled = false; loader.classList.add('hidden'); text.textContent = 'Salvar nova senha';
+  }
+});
+</script>
+{% endblock %}

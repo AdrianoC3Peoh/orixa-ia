@@ -36,9 +36,26 @@
             class="w-full bg-terra-50 border border-terra-200 rounded-xl px-4 py-3 text-terra-800 placeholder-terra-400 focus:outline-none focus:border-terra-500 transition-colors" />
         </div>
         <div>
-          <label class="block text-terra-700 text-sm font-medium mb-2">Senha</label>
-          <input id="senha" type="password" required placeholder="Sua senha"
-            class="w-full bg-terra-50 border border-terra-200 rounded-xl px-4 py-3 text-terra-800 placeholder-terra-400 focus:outline-none focus:border-terra-500 transition-colors" />
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-terra-700 text-sm font-medium">Senha</label>
+            <a href="/esqueci-senha" class="text-terra-500 hover:text-terra-700 text-xs transition-colors">Esqueci a senha</a>
+          </div>
+          <div class="relative">
+            <input id="senha" type="password" required placeholder="Sua senha"
+              class="w-full bg-terra-50 border border-terra-200 rounded-xl px-4 py-3 pr-12 text-terra-800 placeholder-terra-400 focus:outline-none focus:border-terra-500 transition-colors" />
+            <button type="button" onclick="toggleSenha()" title="Mostrar/ocultar senha"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-terra-400 hover:text-terra-600 transition-colors p-1">
+              <svg id="iconOlhoAberto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg id="iconOlhoFechado" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 hidden">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </button>
+          </div>
         </div>
         <button type="submit" id="btnSubmit"
           class="btn-primary w-full text-white py-3 rounded-xl font-semibold text-base mt-2 flex items-center justify-center gap-2">
@@ -55,6 +72,21 @@
 {% endblock %}
 {% block scripts %}
 <script>
+function toggleSenha() {
+  const input = document.getElementById('senha');
+  const aberto = document.getElementById('iconOlhoAberto');
+  const fechado = document.getElementById('iconOlhoFechado');
+  if (input.type === 'password') {
+    input.type = 'text';
+    aberto.classList.add('hidden');
+    fechado.classList.remove('hidden');
+  } else {
+    input.type = 'password';
+    aberto.classList.remove('hidden');
+    fechado.classList.add('hidden');
+  }
+}
+
 document.getElementById('formLogin').addEventListener('submit', async (e) => {
   e.preventDefault();
   const btn = document.getElementById('btnSubmit');
