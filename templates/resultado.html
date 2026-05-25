@@ -126,23 +126,6 @@
       </div>
     </div>
 
-    <!-- MANUAL OPERACIONAL (carregado via JS) -->
-    <div class="glass rounded-2xl p-6 mb-6 border-l-4 border-terra-400">
-      <div class="flex items-center gap-2 mb-3">
-        <span class="w-5 h-5 text-terra-400 flex-shrink-0">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
-            <path d="M15.54 8.46a5 5 0 0 1 0 7.07M8.46 8.46a5 5 0 0 0 0 7.07"/>
-          </svg>
-        </span>
-        <h3 class="font-cinzel font-semibold text-terra-800 text-base">Manual Operacional — {{ p.nome }} + {{ s.nome }} na vida prática</h3>
-      </div>
-      <div id="manual-operacional" class="text-terra-600 text-sm leading-relaxed">
-        <span class="text-terra-300 animate-pulse">Gerando seu manual personalizado...</span>
-      </div>
-    </div>
-
     <!-- Arquétipo Principal -->
     <div class="glass rounded-2xl p-6 mb-6 animate-fade-in bg-terra-50 border-terra-300">
       <div class="flex flex-col sm:flex-row items-center gap-6">
@@ -442,15 +425,9 @@ async function carregarInsight() {
       elMensagem.innerHTML = data.mensagem_dia.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
     }
 
-    const elManual = document.getElementById('manual-operacional');
-    if (elManual && data.manual) {
-      elManual.innerHTML = data.manual.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
-    }
   } catch(err) {
     const elMensagem = document.getElementById('mensagem-dia');
     if (elMensagem) elMensagem.textContent = 'Reflexão indisponível no momento.';
-    const elManual = document.getElementById('manual-operacional');
-    if (elManual) elManual.textContent = 'Manual indisponível no momento.';
   }
 }
 
