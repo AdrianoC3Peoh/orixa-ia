@@ -35,11 +35,10 @@
           <p class="text-terra-700 text-sm leading-relaxed">
             Olá, <strong class="text-terra-800">{{ usuario.nome }}</strong>.<br><br>
             Com base no seu diagnóstico, você carrega a energia de <strong class="text-terra-600">{{ dados.primario_data.nome }}</strong>
-            e Orixá de Cabeça <strong class="text-terra-500">{{ dados.secundario_data.nome }}</strong>.<br><br>
-            Estou aqui para te ajudar a refletir sobre <strong>decisões</strong>, <strong>relacionamentos</strong>,
-            <strong>carreira</strong> e seus padrões comportamentais — tudo com base no seu perfil.
-            Lembre-se: minhas orientações são probabilísticas. Para uma consulta espiritual real, busque um terreiro de confiança.
-            <br><br>O que você gostaria de explorar?
+            como Arquétipo Principal e <strong class="text-terra-500">{{ dados.secundario_data.nome }}</strong> como Arquétipo Auxiliar.<br><br>
+            Posso te ajudar a refletir sobre <strong>decisões</strong>, <strong>relacionamentos</strong>
+            e <strong>carreira</strong> — sempre com base no seu perfil comportamental.
+            Sou um aplicativo, não um guia espiritual: para questões de natureza sagrada, o ideal é buscar quem representa sua tradição religiosa ou espiritual.
           </p>
         </div>
         <div class="text-terra-400 text-xs mt-1 ml-1 font-cinzel">Conselheiro Orixá IA</div>
@@ -60,7 +59,7 @@
       {% endif %}
       <div class="max-w-xl">
         <div class="{% if msg.role == 'user' %}bg-terra-500 text-white rounded-2xl rounded-tr-sm{% else %}glass border-terra-200 rounded-2xl rounded-tl-sm{% endif %} px-4 py-3">
-          <p class="{% if msg.role == 'user' %}text-white{% else %}text-terra-700{% endif %} text-sm leading-relaxed whitespace-pre-wrap">{{ msg.conteudo }}</p>
+          <p class="{% if msg.role == 'user' %}text-white{% else %}text-terra-700{% endif %} text-sm leading-relaxed msg-content" data-raw="{{ msg.conteudo | e }}" data-role="{{ msg.role }}">{{ msg.conteudo }}</p>
         </div>
         <div class="text-terra-400 text-xs mt-1 font-cinzel {% if msg.role == 'user' %}text-right mr-1{% else %}ml-1{% endif %}">
           {% if msg.role == 'user' %}Você{% else %}Conselheiro Orixá IA{% endif %}
@@ -145,12 +144,20 @@ function usarSugestao(btn) {
   enviar();
 }
 
+function parseMarkdown(texto) {
+  return texto
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>');
+}
+
 function addMsg(role, texto) {
   const container = document.getElementById('mensagens');
   const anchor = document.getElementById('anchor');
   const isUser = role === 'user';
   const initial = '{{ usuario.nome[0].upper() }}';
   const emoji = '{{ dados.primario_data.emoji }}';
+  const htmlTexto = isUser ? texto.replace(/</g,'&lt;').replace(/>/g,'&gt;') : parseMarkdown(texto);
 
   const wrap = document.createElement('div');
   wrap.className = `flex gap-3 animate-fade-in ${isUser ? 'flex-row-reverse' : ''}`;
@@ -160,7 +167,7 @@ function addMsg(role, texto) {
     </div>
     <div class="max-w-xl">
       <div class="${isUser ? 'bg-terra-500 text-white rounded-2xl rounded-tr-sm' : 'bg-white border border-terra-200 rounded-2xl rounded-tl-sm shadow-sm'} px-4 py-3">
-        <p class="${isUser ? 'text-white' : 'text-terra-700'} text-sm leading-relaxed whitespace-pre-wrap">${texto}</p>
+        <p class="${isUser ? 'text-white' : 'text-terra-700'} text-sm leading-relaxed">${htmlTexto}</p>
       </div>
       <div class="text-terra-400 text-xs mt-1 font-cinzel ${isUser ? 'text-right mr-1' : 'ml-1'}">${isUser ? 'Você' : 'Conselheiro Orixá IA'}</div>
     </div>
@@ -208,6 +215,13 @@ async function novaConversa() {
     window.location.reload();
   } catch(err) { alert(err.message); }
 }
+
+// Renderiza markdown nas mensagens históricas do banco
+document.querySelectorAll('.msg-content').forEach(el => {
+  if (el.dataset.role === 'assistant') {
+    el.innerHTML = parseMarkdown(el.dataset.raw);
+  }
+});
 
 scrollBottom();
 document.getElementById('inputMsg').focus();
