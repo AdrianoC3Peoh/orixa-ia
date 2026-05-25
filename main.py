@@ -564,9 +564,28 @@ async def api_chat(
     return {"resposta": resposta}
 
 
+# Cache diário de insights — persiste em arquivo para sobreviver reinicializações
+_INSIGHT_CACHE_FILE = os.path.join(os.path.dirname(__file__), "insight_cache.json")
+
+def _load_insight_cache() -> dict:
+    try:
+        with open(_INSIGHT_CACHE_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+def _save_insight_cache(cache: dict):
+    try:
+        with open(_INSIGHT_CACHE_FILE, "w", encoding="utf-8") as f:
+            json.dump(cache, f, ensure_ascii=False)
+    except Exception:
+        pass
+
+
 @app.get("/api/insight-diario")
 async def api_insight_diario(request: Request, db: Session = Depends(get_db)):
-    """Gera mensagem do dia e manual operacional via IA, baseados nos arquétipos do usuário."""
+    """Gera reflexão do dia via IA — uma vez por dia por usuário (cacheado)."""
+    from datetime import date
     usuario = require_usuario(request, db)
     resultado = get_resultado_usuario(usuario.id, db)
     if not resultado:
@@ -575,15 +594,23 @@ async def api_insight_diario(request: Request, db: Session = Depends(get_db)):
     dados = calcular_resultado(resultado.respostas)
     p = dados["primario_data"]
     s = dados["secundario_data"]
+    hoje = date.today().isoformat()
+    cache_key = f"{usuario.id}:{hoje}"
+
+    # Verifica cache do dia
+    cache = _load_insight_cache()
+    if cache_key in cache:
+        return cache[cache_key]
 
     if not ai_client:
-        return {
-            "mensagem_dia": f"Carregue sua energia de {p['nome']} hoje: {p['tomada_decisao']}",
-            "manual": f"**{p['nome']} + {s['nome']}**: Combine a força de {p['subtitulo']} com a perspectiva de {s['subtitulo']} para navegar seu dia com integridade.",
+        resultado_fallback = {
+            "mensagem_dia": f"Hoje, carregue a clareza de {p['nome']}: {p['tomada_decisao']}",
+            "primario": p["nome"],
+            "secundario": s["nome"],
         }
-
-    from datetime import date
-    hoje = date.today().isoformat()
+        cache[cache_key] = resultado_fallback
+        _save_insight_cache(cache)
+        return resultado_fallback
 
     prompt = f"""Você é um conselheiro de autoconhecimento do app Orixá IA.
 
@@ -595,42 +622,30 @@ O usuário tem o seguinte perfil:
 
 Data de hoje: {hoje}
 
-Gere DOIS blocos distintos, separados por "---":
-
-BLOCO 1 — MENSAGEM DO DIA (máx. 4 linhas):
+Gere uma REFLEXÃO DO DIA (máx. 4 linhas):
 Uma reflexão prática e inspiradora para hoje, conectada aos arquétipos {p['nome']} e {s['nome']}.
 Deve ser específica, não genérica. Conecte os arquétipos à vida cotidiana de forma respeitosa e profunda.
 Não use saudações. Comece direto na reflexão.
-
----
-
-BLOCO 2 — MANUAL OPERACIONAL (máx. 8 linhas):
-Um guia prático de como a combinação {p['nome']} + {s['nome']} funciona na vida real.
-Inclua: como essa combinação se comporta sob pressão, no trabalho, nos relacionamentos.
-Seja concreto, sem jargão espiritual excessivo. Escreva como um conselheiro experiente, com respeito à tradição.
-Não faça lista de tópicos — escreva em prosa fluida.
 """
 
     try:
         response = ai_client.messages.create(
             model="claude-haiku-4-5-20251001",
-            max_tokens=600,
+            max_tokens=300,
             messages=[{"role": "user", "content": prompt}],
         )
-        texto = response.content[0].text
-        partes = texto.split("---")
-        mensagem_dia = partes[0].strip() if len(partes) > 0 else texto
-        manual = partes[1].strip() if len(partes) > 1 else ""
-    except Exception as e:
+        mensagem_dia = response.content[0].text.strip()
+    except Exception:
         mensagem_dia = f"Hoje, carregue a clareza de {p['nome']}: {p['tomada_decisao']}"
-        manual = f"A combinação {p['nome']} + {s['nome']}: {p['descricao']}"
 
-    return {
+    resultado_final = {
         "mensagem_dia": mensagem_dia,
-        "manual": manual,
         "primario": p["nome"],
         "secundario": s["nome"],
     }
+    cache[cache_key] = resultado_final
+    _save_insight_cache(cache)
+    return resultado_final
 
 
 @app.post("/api/premium/ativar")
