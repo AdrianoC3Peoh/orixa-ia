@@ -46,6 +46,16 @@ ORIXAS: Dict[str, dict] = {
         ),
         "simbolo_cultural": "Ferro, ferramentas, caminhos",
         "elementos": ["ferro", "trabalho", "caminhos", "guerreiro"],
+        "cores": ["Azul marinho", "Verde", "Preto"],
+        "datas": [
+            {"data": "Terça-feira", "significado": "Dia semanal de Ogum — ideal para iniciar projetos e superar obstáculos"},
+            {"data": "23 de abril", "significado": "Festa de São Jorge, sincretizado com Ogum — celebração da força e da abertura de caminhos"},
+        ],
+        "praticas": [
+            "Comece o dia escrevendo um obstáculo que quer vencer. À noite, registre o que fez para avançar.",
+            "Exercício físico pela manhã ativa sua energia natural de ação e clareza.",
+            "Antes de uma decisão importante, pergunte a si mesmo: 'Isso abre ou fecha caminhos?'",
+        ],
     },
     "oxossi": {
         "nome": "Oxóssi",
@@ -92,6 +102,16 @@ ORIXAS: Dict[str, dict] = {
         ),
         "simbolo_cultural": "Arco e flecha, floresta, caça",
         "elementos": ["floresta", "estratégia", "caça", "natureza"],
+        "cores": ["Verde escuro", "Azul turquesa", "Marrom terra"],
+        "datas": [
+            {"data": "Quinta-feira", "significado": "Dia de Oxóssi — propício para planejamento, estudo e foco profundo"},
+            {"data": "20 de janeiro", "significado": "Celebração do caçador em algumas casas — momento de renovar intenções e alinhar estratégia"},
+        ],
+        "praticas": [
+            "Reserve 15 minutos de silêncio diário para planejar. Oxóssi não desperdiça flechas.",
+            "Antes de qualquer decisão, escreva: 'Qual é exatamente o meu objetivo aqui?'",
+            "Passe tempo na natureza semanalmente — árvores, parques, trilhas — para recarregar o foco.",
+        ],
     },
     "xango": {
         "nome": "Xangô",
@@ -138,6 +158,16 @@ ORIXAS: Dict[str, dict] = {
         ),
         "simbolo_cultural": "Raio, pedra, balança",
         "elementos": ["trovão", "fogo", "justiça", "poder"],
+        "cores": ["Vermelho", "Branco", "Marrom"],
+        "datas": [
+            {"data": "Quarta-feira", "significado": "Dia de Xangô — propício para questões de justiça, liderança e acordos importantes"},
+            {"data": "29 de junho", "significado": "Festa de São Pedro, sincretizado com Xangô em algumas tradições — celebração da autoridade justa"},
+        ],
+        "praticas": [
+            "Antes de julgar uma situação ou pessoa, pergunte: 'Tenho todos os fatos?'",
+            "Quando sentir indignação com injustiça, canalize-a em ação concreta — não apenas em raiva.",
+            "Honre seus compromissos como honraria uma lei: sua palavra é seu maior símbolo de autoridade.",
+        ],
     },
     "iansa": {
         "nome": "Iansã",
@@ -184,6 +214,16 @@ ORIXAS: Dict[str, dict] = {
         ),
         "simbolo_cultural": "Vento, raio, espadas",
         "elementos": ["vento", "fogo", "tempestade", "liberdade"],
+        "cores": ["Marrom avermelhado", "Amarelo", "Coral"],
+        "datas": [
+            {"data": "Segunda-feira", "significado": "Dia de Iansã — ideal para iniciar mudanças e enfrentar o que está estagnado"},
+            {"data": "4 de dezembro", "significado": "Festa de Santa Bárbara, sincretizada com Iansã — celebração da coragem e da força transformadora"},
+        ],
+        "praticas": [
+            "Quando sentir que está preso em algo, pergunte: 'Que vento novo pode entrar aqui?'",
+            "Antes de decisões impulsivas, faça 10 respirações lentas — a clareza virá sem apagar a coragem.",
+            "Pratique uma mudança pequena por semana para manter seu fluxo natural de renovação.",
+        ],
     },
     "iemanja": {
         "nome": "Iemanjá",
@@ -229,6 +269,16 @@ ORIXAS: Dict[str, dict] = {
         ),
         "simbolo_cultural": "Mar, lua, estrelas do mar",
         "elementos": ["água", "mar", "lua", "maternidade"],
+        "cores": ["Azul claro", "Branco", "Prata"],
+        "datas": [
+            {"data": "Sábado", "significado": "Dia de Iemanjá — propício para cuidar de si e fortalecer vínculos afetivos"},
+            {"data": "2 de fevereiro", "significado": "Festa de Iemanjá — celebração da mãe das águas, de proteção e dos vínculos profundos"},
+        ],
+        "praticas": [
+            "Ao final do dia, identifique alguém que você cuidou — e alguém que cuidou de você.",
+            "Quando as emoções estiverem intensas, beba um copo d'água conscientemente antes de reagir.",
+            "Periodicamente, escreva quem está em sua rede de proteção afetiva. Cuide dessas pessoas.",
+        ],
     },
     "oxum": {
         "nome": "Oxum",
@@ -274,6 +324,16 @@ ORIXAS: Dict[str, dict] = {
         ),
         "simbolo_cultural": "Ouro, espelho, rios",
         "elementos": ["ouro", "água doce", "beleza", "amor"],
+        "cores": ["Dourado", "Amarelo mel", "Coral suave"],
+        "datas": [
+            {"data": "Sábado", "significado": "Dia de Oxum — propício para cultivar beleza, afetos e abundância"},
+            {"data": "8 de dezembro", "significado": "Festa de Nossa Senhora da Conceição, sincretizada com Oxum — celebração do amor, da fertilidade e da criação"},
+        ],
+        "praticas": [
+            "Cuide de um espaço da sua casa ou trabalho com intenção de beleza — Oxum prospera em ambientes harmoniosos.",
+            "Quando sentir que está desvalorizado, pergunte: 'Estou me valorizando primeiro?'",
+            "Pratique gratidão diária por algo belo ou abundante que existe na sua vida agora.",
+        ],
     },
     "oxala": {
         "nome": "Oxalá",
@@ -319,6 +379,16 @@ ORIXAS: Dict[str, dict] = {
         ),
         "simbolo_cultural": "Branco, bastão, paz",
         "elementos": ["branco", "ar", "paz", "criação"],
+        "cores": ["Branco", "Prata", "Cinza suave"],
+        "datas": [
+            {"data": "Sexta-feira", "significado": "Dia de Oxalá em muitas casas — propício para meditação, cura, perdão e recomeços"},
+            {"data": "1º de janeiro", "significado": "Festa do Senhor do Bonfim e renovação — celebração da paz, da criação e dos recomeços"},
+        ],
+        "praticas": [
+            "Pratique uma pausa consciente de 5 minutos antes de qualquer decisão importante.",
+            "Quando alguém errar com você, pergunte internamente: 'O que precisaria entender para perdoar?'",
+            "Reserve 15 minutos diários em silêncio — sem tela, sem barulho. Apenas presença.",
+        ],
     },
     "omolu": {
         "nome": "Omolu",
@@ -365,6 +435,16 @@ ORIXAS: Dict[str, dict] = {
         ),
         "simbolo_cultural": "Terra, palha, doenças e cura",
         "elementos": ["terra", "cura", "morte", "renascimento"],
+        "cores": ["Preto", "Vermelho", "Branco"],
+        "datas": [
+            {"data": "Segunda-feira", "significado": "Dia de Omolu — propício para processos de cura, transformação e superação de ciclos difíceis"},
+            {"data": "13 de maio", "significado": "Data associada à transformação social e à cura coletiva em algumas tradições"},
+        ],
+        "praticas": [
+            "Ao final de um ciclo difícil, escreva: 'O que essa experiência me ensinou?'",
+            "Não carregue sofrimento em silêncio — a cura começa pelo reconhecimento honesto da dor.",
+            "Celebre vitórias pequenas: quem supera muito precisa aprender a reconhecer suas conquistas.",
+        ],
     },
     "oxumare": {
         "nome": "Oxumaré",
@@ -411,6 +491,16 @@ ORIXAS: Dict[str, dict] = {
         ),
         "simbolo_cultural": "Arco-íris, cobra, ciclos",
         "elementos": ["arco-íris", "cobra", "ciclos", "dualidade"],
+        "cores": ["Verde", "Amarelo", "Todas as cores em movimento"],
+        "datas": [
+            {"data": "Terça-feira", "significado": "Dia de Oxumaré em algumas casas — propício para mudanças, adaptações e abertura de novos ciclos"},
+            {"data": "Solstícios e equinócios", "significado": "Pontos de transição do ano — momentos naturais de renovação e de fechamento de ciclos para Oxumaré"},
+        ],
+        "praticas": [
+            "Quando estiver entre duas opções opostas, pergunte: 'Existe uma terceira via que reúne o melhor das duas?'",
+            "A cada mês, avalie: que ciclo está se encerrando e que novo está chegando?",
+            "Celebre suas contradições — sua capacidade de ver dos dois lados é um diferencial raro.",
+        ],
     },
     "nana": {
         "nome": "Nanã",
@@ -457,6 +547,16 @@ ORIXAS: Dict[str, dict] = {
         ),
         "simbolo_cultural": "Lama, chuva, palha roxa",
         "elementos": ["lama", "chuva", "memória", "ancestralidade"],
+        "cores": ["Lilás", "Azul lavanda", "Branco"],
+        "datas": [
+            {"data": "Segunda-feira", "significado": "Dia de Nanã — propício para conexão com a memória, a família e as raízes ancestrais"},
+            {"data": "26 de julho", "significado": "Festa de Sant'Ana, sincretizada com Nanã — celebração da ancestralidade, da sabedoria das avós e da continuidade"},
+        ],
+        "praticas": [
+            "Periodicamente, reconecte-se com sua história: fotos, memórias, histórias de família.",
+            "Quando estiver preso no passado, pergunte: 'O que esse ensinamento me pede para fazer agora?'",
+            "Crie rituais de continuidade: preserve o que é essencial, libere o que já cumpriu seu ciclo.",
+        ],
     },
 }
 
@@ -810,8 +910,8 @@ def calcular_resultado(respostas: dict) -> dict:
 SYSTEM_PROMPT_TEMPLATE = """Você é um conselheiro de autoconhecimento do app Orixá IA, especializado nos padrões comportamentais dos arquétipos ancestrais afro-brasileiros.
 
 O usuário tem o seguinte perfil comportamental:
-- **Orixá de Frente**: {primario} — {primario_subtitulo}
-- **Orixá de Cabeça**: {secundario} — {secundario_subtitulo}
+- **Arquétipo Principal**: {primario} — {primario_subtitulo}
+- **Arquétipo Auxiliar**: {secundario} — {secundario_subtitulo}
 
 **Sobre o perfil primário**:
 {primario_descricao}
@@ -832,23 +932,27 @@ O usuário tem o seguinte perfil comportamental:
 
 COMO VOCÊ DEVE RESPONDER:
 
-1. **Voz de conselheiro, em primeira pessoa**: Fale como alguém que conhece profundamente o perfil do usuário. Use frases como "Com base no seu perfil...", "Percebo que você tende a...", "Quem carrega a energia de {primario} geralmente...", "Uma reflexão importante para você...". Não seja frio nem clínico — seja como um sábio que aconselha com cuidado.
+1. **Voz de conselheiro sábio**: Fale como alguém que conhece profundamente o perfil do usuário. Use frases como "Com base no seu perfil...", "Percebo que você tende a...", "Quem carrega a energia de {primario} geralmente...", "Uma reflexão importante para você...". Seja como um conselheiro que orienta com cuidado e clareza — não como uma máquina.
 
-2. **Respeito à tradição**: Os Orixás são entidades sagradas para milhões de pessoas no Brasil e no mundo. Trate seus arquétipos com seriedade e reverência. Nunca banalize, nunca faça piada, nunca reduza a tradição a um simples teste de personalidade.
+2. **Você é um aplicativo, não um guia espiritual**: Deixe isso claro quando relevante. Você oferece reflexões baseadas em padrões comportamentais — não previsões, não certezas espirituais, não diagnósticos. Use sempre linguagem probabilística: "é provável que", "muitas pessoas com esse perfil", "uma tendência comum é".
 
-3. **Clareza sobre probabilidades**: Deixe claro que suas orientações são baseadas em padrões comportamentais identificados — tendências prováveis, não certezas absolutas. Use "é provável que", "muitas pessoas com esse perfil", "uma tendência comum é", "não é uma regra, mas...".
+3. **Respeito à tradição**: Os Orixás são entidades sagradas para milhões de pessoas. Trate seus arquétipos com seriedade e reverência. Nunca banalize, nunca faça piada, nunca reduza a tradição a um simples teste de personalidade.
 
-4. **Recomendação ao terreiro**: Sempre que o usuário perguntar sobre questões espirituais, seu "orixá de cabeça", destino, missão de vida ou temas de natureza sagrada, inclua ao final: *"Lembre-se: para uma orientação espiritual verdadeira, o ideal é visitar um terreiro e consultar um Pai ou Mãe de Santo de confiança. O jogo de búzios é o caminho legítimo para conhecer seu Ori — algo que nenhum aplicativo pode substituir."*
+4. **Orientação espiritual e religiosa — postura laica e respeitosa**: Quando o usuário perguntar sobre questões espirituais, destino, missão de vida ou temas sagrados, encaminhe com respeito à orientação de cada um. Use algo como: *"Para questões de natureza espiritual, o ideal é buscar orientação com quem representa sua tradição: se você é de religiões de matriz africana, um Pai ou Mãe de Santo de confiança pode te guiar com profundidade. Se segue outra tradição religiosa, um padre, pastor, rabino ou líder espiritual da sua comunidade são os caminhos mais indicados. O que nenhum aplicativo pode substituir é o olhar humano de quem conhece sua jornada."*
 
-5. **Inclua o secundário**: Quando relevante, mencione como a influência de {secundario} complementa, tensiona ou enriquece o perfil primário.
+5. **Postura passiva — não prolongue a conversa**: Você é um conselheiro, não um interlocutor ativo. Responda com profundidade mas NÃO faça perguntas de acompanhamento, NÃO se coloque à disposição de forma proativa ("se precisar estou aqui", "pode me perguntar qualquer coisa", etc.). Cada resposta deve ser completa em si mesma — o usuário é quem decide continuar ou não.
 
-6. **Tom**: Sério, cálido, respeitoso. Sem gírias, sem excessiva informalidade, mas também sem frieza técnica. Pense em como um ancião sábio falaria — com autoridade e cuidado ao mesmo tempo.
+6. **Não crie dependência**: Se o usuário demonstrar que está usando o chat como suporte emocional primário ou para questões que exigem ajuda profissional, acolha com cuidado e indique recursos adequados: terapia, aconselhamento, apoio médico, espiritual ou comunitário — conforme o tema. Nunca estimule que o usuário volte ao chat como substituto de ajuda real.
 
-7. **Tamanho**: Respostas de 3 a 5 parágrafos. Substanciais, mas sem prolixidade. Cada parágrafo deve trazer uma reflexão nova.
+7. **Inclua o arquétipo auxiliar quando relevante**: Mencione como a influência de {secundario} complementa, tensiona ou enriquece o perfil primário.
 
-8. **Limites**: Não faça diagnósticos médicos ou psicológicos. Se o usuário trouxer algo que exige atenção profissional de saúde, acolha e indique que busque apoio especializado.
+8. **Tom**: Sério, cálido, respeitoso. Sem gírias, sem informalidade excessiva, mas também sem frieza técnica. Pense em como um conselheiro experiente falaria — com autoridade tranquila e cuidado genuíno.
 
-Você pode orientar sobre: decisões de vida, relacionamentos, carreira, padrões emocionais, pontos cegos, forças, propósito — sempre conectando ao arquétipo com respeito e profundidade.
+9. **Tamanho**: Respostas de 3 a 5 parágrafos. Substanciais, mas sem prolixidade. Cada parágrafo deve trazer uma reflexão nova, não repetir o anterior.
+
+10. **Limites claros**: Não faça diagnósticos médicos ou psicológicos. Se o usuário trouxer algo que exige atenção profissional de saúde mental, acolha com empatia e oriente claramente a buscar apoio especializado.
+
+Você pode orientar sobre: decisões de vida, relacionamentos, carreira, padrões emocionais, pontos cegos, forças, propósito — sempre conectando ao arquétipo com respeito e profundidade, e sempre lembrando que você é uma ferramenta de reflexão, não um oráculo.
 """
 
 

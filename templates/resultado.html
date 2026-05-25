@@ -5,7 +5,7 @@
   <div class="max-w-4xl mx-auto">
 
     <!-- Header -->
-    <div class="text-center mb-10 animate-fade-in">
+    <div class="text-center mb-8 animate-fade-in">
       <span class="ornament text-4xl block mb-3">✦</span>
       <p class="font-cinzel text-terra-500 text-xs uppercase tracking-widest mb-2">Seu Diagnóstico</p>
       <h1 class="font-cinzel font-bold text-4xl text-terra-800 mb-3">Perfil Comportamental</h1>
@@ -15,12 +15,107 @@
     {% set p = dados.primario_data %}
     {% set s = dados.secundario_data %}
 
-    <!-- Orixá de Cabeça -->
+    <!-- BOTÃO DO CHAT — TOPO -->
+    {% if usuario.is_premium %}
+    <div class="text-center mb-8 animate-fade-in">
+      <a href="/chat" class="btn-gold text-white px-8 py-4 rounded-xl font-bold text-lg inline-flex items-center gap-3 shadow-lg">
+        <svg class="w-5 h-5" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 10h24a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H22l-6 4v-4H8a2 2 0 0 1-2-2V12a2 2 0 0 1 2-2z"/>
+          <line x1="13" y1="17" x2="27" y2="17"/><line x1="13" y1="22" x2="21" y2="22"/>
+        </svg>
+        Conversar com meu Conselheiro
+      </a>
+    </div>
+    {% else %}
+    <div class="glass rounded-2xl p-6 mb-8 text-center bg-terra-50 border-terra-300 animate-fade-in">
+      <div class="ornament text-3xl mb-3 block">✦</div>
+      <h3 class="font-cinzel font-bold text-xl text-terra-800 mb-2">Converse com seu Conselheiro</h3>
+      <p class="text-terra-600 mb-4 text-sm max-w-lg mx-auto">
+        Com o plano Premium, você acessa um assistente de IA calibrado no arquétipo <strong class="text-terra-700">{{ p.nome }}</strong> para orientação em decisões, relacionamentos e carreira.
+      </p>
+      <a href="/assinar" class="btn-gold text-white px-6 py-3 rounded-xl font-semibold inline-flex items-center gap-2 text-sm">
+        ✦ Assinar Premium · R$ 29,90/mês
+      </a>
+    </div>
+    {% endif %}
+
+    <!-- CARDS RÁPIDOS: Mensagem do Dia + Cores + Datas + Práticas -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+
+      <!-- Mensagem do Dia (carregada via JS) -->
+      <div class="glass rounded-2xl p-4 border-terra-200 sm:col-span-2 lg:col-span-4">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-terra-400 text-lg">☀️</span>
+          <span class="font-cinzel text-terra-500 text-xs uppercase tracking-widest">Reflexão de Hoje</span>
+        </div>
+        <div id="mensagem-dia" class="text-terra-700 text-sm leading-relaxed italic">
+          <span class="text-terra-300 animate-pulse">Carregando reflexão...</span>
+        </div>
+      </div>
+
+      <!-- Cores -->
+      <div class="glass rounded-2xl p-4 border-terra-200">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-lg">🎨</span>
+          <span class="font-cinzel text-terra-500 text-xs uppercase tracking-widest">Cores</span>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          {% for cor in p.cores %}
+          <span class="text-xs bg-terra-100 text-terra-700 border border-terra-200 px-2 py-1 rounded-full">{{ cor }}</span>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Datas -->
+      <div class="glass rounded-2xl p-4 border-terra-200">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-lg">📅</span>
+          <span class="font-cinzel text-terra-500 text-xs uppercase tracking-widest">Datas</span>
+        </div>
+        <div class="space-y-2">
+          {% for d in p.datas %}
+          <div>
+            <div class="font-cinzel text-terra-700 text-xs font-semibold">{{ d.data }}</div>
+            <div class="text-terra-500 text-xs leading-snug">{{ d.significado }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Práticas -->
+      <div class="glass rounded-2xl p-4 border-terra-200 sm:col-span-2">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-lg">🌿</span>
+          <span class="font-cinzel text-terra-500 text-xs uppercase tracking-widest">Práticas Simples</span>
+        </div>
+        <ul class="space-y-1.5">
+          {% for pr in p.praticas %}
+          <li class="flex items-start gap-2 text-xs text-terra-600">
+            <span class="text-terra-400 mt-0.5 flex-shrink-0">›</span>
+            <span>{{ pr }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <!-- MANUAL OPERACIONAL (carregado via JS) -->
+    <div class="glass rounded-2xl p-6 mb-6 border-l-4 border-terra-400">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-terra-400 text-lg">⚙️</span>
+        <h3 class="font-cinzel font-semibold text-terra-800 text-base">Manual Operacional — {{ p.nome }} + {{ s.nome }} na vida prática</h3>
+      </div>
+      <div id="manual-operacional" class="text-terra-600 text-sm leading-relaxed">
+        <span class="text-terra-300 animate-pulse">Gerando seu manual personalizado...</span>
+      </div>
+    </div>
+
+    <!-- Arquétipo Principal -->
     <div class="glass rounded-2xl p-6 mb-6 animate-fade-in bg-terra-50 border-terra-300">
       <div class="flex flex-col sm:flex-row items-center gap-6">
         <div class="w-20 h-20 flex-shrink-0 text-terra-500">{{ p.icone_svg | safe }}</div>
         <div class="flex-1 text-center sm:text-left">
-          <p class="font-cinzel text-terra-500 text-xs uppercase tracking-widest mb-1">Orixá de Frente — Indicação Comportamental</p>
+          <p class="font-cinzel text-terra-500 text-xs uppercase tracking-widest mb-1">Arquétipo Principal — Indicação Comportamental</p>
           <h2 class="font-cinzel font-bold text-3xl text-terra-800 mb-1">{{ p.nome }}</h2>
           <p class="text-terra-600 text-sm leading-relaxed max-w-xl">
             Com base nas suas {{ dados.percentuais[dados.primario] }}% de respostas alinhadas a este padrão, <strong class="text-terra-700">{{ p.nome }}</strong> é o arquétipo dominante do seu perfil comportamental.
@@ -40,12 +135,12 @@
       </div>
     </div>
 
-    <!-- Arquétipo Primário -->
+    <!-- Detalhamento Arquétipo Principal -->
     <div class="glass rounded-2xl p-8 mb-6 animate-slide-up border-l-4 border-terra-500">
       <div class="flex flex-col md:flex-row items-start gap-6">
         <div class="flex-shrink-0 text-center">
           <div class="w-16 h-16 mx-auto mb-2 text-terra-500">{{ p.icone_svg | safe }}</div>
-          <div class="text-xs text-terra-500 font-cinzel font-medium uppercase tracking-wider">de Frente</div>
+          <div class="text-xs text-terra-500 font-cinzel font-medium uppercase tracking-wider">Principal</div>
         </div>
         <div class="flex-1">
           <div class="flex items-center gap-3 mb-2 flex-wrap">
@@ -63,14 +158,14 @@
       </div>
     </div>
 
-    <!-- Arquétipo Secundário -->
+    <!-- Arquétipo Auxiliar -->
     <div class="glass rounded-2xl p-6 mb-6 animate-slide-up border-l-4 border-slate2-400">
       <div class="flex items-start gap-4">
         <div class="w-12 h-12 flex-shrink-0 text-slate2-500">{{ s.icone_svg | safe }}</div>
         <div class="flex-1">
           <div class="flex items-center gap-3 mb-1 flex-wrap">
             <h3 class="font-cinzel font-semibold text-2xl text-terra-800">{{ s.nome }}</h3>
-            <span class="text-xs text-terra-500 bg-terra-100 border border-terra-200 px-2 py-0.5 rounded-full">Orixá de Cabeça</span>
+            <span class="text-xs text-terra-500 bg-terra-100 border border-terra-200 px-2 py-0.5 rounded-full">Arquétipo Auxiliar</span>
             <span class="text-sm text-terra-500">{{ dados.percentuais[dados.secundario] }}%</span>
           </div>
           <p class="text-terra-600 font-medium text-sm mb-2 font-cinzel">{{ s.subtitulo }}</p>
@@ -91,15 +186,15 @@
       </h3>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="bg-white rounded-xl p-4 border border-terra-200">
-          <div class="text-terra-500 font-cinzel text-xs uppercase tracking-wider mb-2">Orixá de Frente</div>
+          <div class="text-terra-500 font-cinzel text-xs uppercase tracking-wider mb-2">Arquétipo Principal</div>
           <p class="text-terra-700 text-sm leading-relaxed">A energia dominante que guia suas ações, decisões e comportamentos no dia a dia. É seu padrão mais recorrente.</p>
         </div>
         <div class="bg-white rounded-xl p-4 border border-terra-200">
-          <div class="text-terra-500 font-cinzel text-xs uppercase tracking-wider mb-2">Orixá de Cabeça</div>
-          <p class="text-terra-700 text-sm leading-relaxed">A segunda energia mais presente. Complementa o Orixá de Frente — aparece em situações específicas, relacionamentos e contextos emocionais.</p>
+          <div class="text-terra-500 font-cinzel text-xs uppercase tracking-wider mb-2">Arquétipo Auxiliar</div>
+          <p class="text-terra-700 text-sm leading-relaxed">A segunda energia mais presente. Complementa o Arquétipo Principal — aparece em situações específicas, relacionamentos e contextos emocionais.</p>
         </div>
         <div class="bg-white rounded-xl p-4 border border-terra-300">
-          <div class="text-terra-600 font-cinzel text-xs uppercase tracking-wider mb-2">⚠ Orixá de Cabeça (Ori)</div>
+          <div class="text-terra-600 font-cinzel text-xs uppercase tracking-wider mb-2">⚠ Ori Espiritual</div>
           <p class="text-terra-700 text-sm leading-relaxed">Na tradição, o Ori é determinado pelo jogo de búzios com um Pai ou Mãe de Santo. <strong class="text-terra-600">Este app identifica tendências comportamentais, não substitui essa consulta sagrada.</strong></p>
         </div>
       </div>
@@ -264,30 +359,6 @@
       </div>
     </div>
 
-    <!-- CTA Premium -->
-    {% if not usuario.is_premium %}
-    <div class="glass rounded-2xl p-8 text-center mb-6 bg-terra-50 border-terra-300">
-      <div class="ornament text-4xl mb-4 block">✦</div>
-      <h3 class="font-cinzel font-bold text-2xl text-terra-800 mb-3">Converse com seu Conselheiro</h3>
-      <p class="text-terra-600 mb-6 max-w-lg mx-auto">
-        Com o plano Premium, você acessa um assistente de IA calibrado no arquétipo <strong class="text-terra-700">{{ p.nome }}</strong> para orientação em decisões, relacionamentos e carreira.
-      </p>
-      <a href="/assinar" class="btn-gold text-white px-8 py-3 rounded-xl font-semibold inline-flex items-center gap-2">
-        ✦ Assinar Premium · R$ 29,90/mês
-      </a>
-    </div>
-    {% else %}
-    <div class="text-center mb-6">
-      <a href="/chat" class="btn-gold text-white px-8 py-4 rounded-xl font-bold text-lg inline-flex items-center gap-3">
-        <svg class="w-5 h-5" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M8 10h24a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H22l-6 4v-4H8a2 2 0 0 1-2-2V12a2 2 0 0 1 2-2z"/>
-          <line x1="13" y1="17" x2="27" y2="17"/><line x1="13" y1="22" x2="21" y2="22"/>
-        </svg>
-        Conversar com meu Conselheiro
-      </a>
-    </div>
-    {% endif %}
-
     <!-- Terreiros próximos -->
     <div class="glass rounded-2xl p-6 mb-6 border-terra-200">
       <div class="flex items-center gap-3 mb-3">
@@ -302,7 +373,7 @@
         </span>
         <h3 class="font-cinzel font-semibold text-terra-800 text-lg">Encontre um Terreiro</h3>
       </div>
-      <p class="text-terra-600 text-sm mb-4">Para uma orientação espiritual verdadeira, visite um terreiro de confiança e consulte um Pai ou Mãe de Santo. O jogo de búzios é o único caminho legítimo para conhecer seu Ori.</p>
+      <p class="text-terra-600 text-sm mb-4">Para quem é de religiões de matriz africana, visitar um terreiro de confiança e consultar um Pai ou Mãe de Santo é o caminho legítimo para conhecer seu Ori. O jogo de búzios é único e insubstituível.</p>
       <a href="/terreiros" class="inline-flex items-center gap-2 btn-primary text-white px-5 py-2.5 rounded-xl text-sm font-medium">
         Ver terreiros próximos →
       </a>
@@ -327,5 +398,29 @@ async function confirmarRefazer() {
     window.location.href = '/questionario';
   } catch(err) { alert(err.message); }
 }
+
+// Carrega insight diário (mensagem + manual)
+async function carregarInsight() {
+  try {
+    const data = await apiFetch('/api/insight-diario');
+
+    const elMensagem = document.getElementById('mensagem-dia');
+    if (elMensagem && data.mensagem_dia) {
+      elMensagem.innerHTML = data.mensagem_dia.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+    }
+
+    const elManual = document.getElementById('manual-operacional');
+    if (elManual && data.manual) {
+      elManual.innerHTML = data.manual.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+    }
+  } catch(err) {
+    const elMensagem = document.getElementById('mensagem-dia');
+    if (elMensagem) elMensagem.textContent = 'Reflexão indisponível no momento.';
+    const elManual = document.getElementById('manual-operacional');
+    if (elManual) elManual.textContent = 'Manual indisponível no momento.';
+  }
+}
+
+carregarInsight();
 </script>
 {% endblock %}

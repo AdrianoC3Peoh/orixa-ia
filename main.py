@@ -564,6 +564,75 @@ async def api_chat(
     return {"resposta": resposta}
 
 
+@app.get("/api/insight-diario")
+async def api_insight_diario(request: Request, db: Session = Depends(get_db)):
+    """Gera mensagem do dia e manual operacional via IA, baseados nos arquétipos do usuário."""
+    usuario = require_usuario(request, db)
+    resultado = get_resultado_usuario(usuario.id, db)
+    if not resultado:
+        raise HTTPException(400, "Complete o questionário primeiro")
+
+    dados = calcular_resultado(resultado.respostas)
+    p = dados["primario_data"]
+    s = dados["secundario_data"]
+
+    if not ai_client:
+        return {
+            "mensagem_dia": f"Carregue sua energia de {p['nome']} hoje: {p['tomada_decisao']}",
+            "manual": f"**{p['nome']} + {s['nome']}**: Combine a força de {p['subtitulo']} com a perspectiva de {s['subtitulo']} para navegar seu dia com integridade.",
+        }
+
+    from datetime import date
+    hoje = date.today().isoformat()
+
+    prompt = f"""Você é um conselheiro de autoconhecimento do app Orixá IA.
+
+O usuário tem o seguinte perfil:
+- Arquétipo Principal: {p['nome']} — {p['subtitulo']}
+- Arquétipo Auxiliar: {s['nome']} — {s['subtitulo']}
+- Forças de {p['nome']}: {', '.join(p['pontos_fortes'][:3])}
+- Atenção de {p['nome']}: {', '.join(p['pontos_atencao'][:2])}
+
+Data de hoje: {hoje}
+
+Gere DOIS blocos distintos, separados por "---":
+
+BLOCO 1 — MENSAGEM DO DIA (máx. 4 linhas):
+Uma reflexão prática e inspiradora para hoje, conectada aos arquétipos {p['nome']} e {s['nome']}.
+Deve ser específica, não genérica. Conecte os arquétipos à vida cotidiana de forma respeitosa e profunda.
+Não use saudações. Comece direto na reflexão.
+
+---
+
+BLOCO 2 — MANUAL OPERACIONAL (máx. 8 linhas):
+Um guia prático de como a combinação {p['nome']} + {s['nome']} funciona na vida real.
+Inclua: como essa combinação se comporta sob pressão, no trabalho, nos relacionamentos.
+Seja concreto, sem jargão espiritual excessivo. Escreva como um conselheiro experiente, com respeito à tradição.
+Não faça lista de tópicos — escreva em prosa fluida.
+"""
+
+    try:
+        response = ai_client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=600,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        texto = response.content[0].text
+        partes = texto.split("---")
+        mensagem_dia = partes[0].strip() if len(partes) > 0 else texto
+        manual = partes[1].strip() if len(partes) > 1 else ""
+    except Exception as e:
+        mensagem_dia = f"Hoje, carregue a clareza de {p['nome']}: {p['tomada_decisao']}"
+        manual = f"A combinação {p['nome']} + {s['nome']}: {p['descricao']}"
+
+    return {
+        "mensagem_dia": mensagem_dia,
+        "manual": manual,
+        "primario": p["nome"],
+        "secundario": s["nome"],
+    }
+
+
 @app.post("/api/premium/ativar")
 async def api_ativar_premium(
     data: UpgradeRequest,
